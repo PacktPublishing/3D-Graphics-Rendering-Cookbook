@@ -1,0 +1,114 @@
+[
+{
+    "name": "vulkan",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
+        "revision": "v1.2.131"
+    }
+},
+{
+    "name": "glfw",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/glfw/glfw.git",
+        "revision": "3.3"
+    }
+},
+{
+    "name": "glm",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/g-truc/glm.git",
+        "revision": "0.9.9.6"
+    }
+},
+{
+    "name": "imgui",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/ocornut/imgui.git",
+        "revision" : "0bdc1453433ab0bb4d889c72ef9b0353ba3998aa"
+    }
+},
+{
+    "name": "stb",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/nothings/stb.git",
+        "revision" : "f67165c2bb2af3060ecae7d20d6f731173485ad0"
+    }
+},
+{
+    "name": "easy_profiler",
+    "source": {
+        "type": "archive",
+        "url": "https://github.com/yse/easy_profiler/releases/download/v2.1.0/easy_profiler-v2.1.0-msvc15-win64.zip",
+        "sha1": "d7b99c2b0e18e4c6f963724c0ff3a852a34b1b07"
+    }
+},
+{
+    "name": "easy_sources",
+    "source": {
+        "type": "archive",
+        "url": "https://github.com/yse/easy_profiler/archive/v2.1.0.zip",
+        "sha1": "4c19019a3ced6b11179d7eabcfd65f463f254e34"
+    }
+},
+{
+    "name": "optick",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/bombomby/optick.git",
+        "revision": "06322ee59567f1f89b882f8ec7ce733b4c7c001d"
+    }
+},
+{
+    "name": "assimp",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/assimp/assimp.git",
+        "revision": "a9f82dbe0b8a658003f93c7b5108ee4521458a18"
+    }
+},
+{
+    "name": "etc2comp",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/google/etc2comp",
+        "revision": "9cd0f9cae0f32338943699bb418107db61bb66f2"
+    }
+},
+{
+    "name": "cpptaskflow",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/cpp-taskflow/cpp-taskflow.git",
+        "revision": "e11de77e000a0103ac6fcf657d89130cb808aa63"
+    }
+},
+{
+    "name": "meshoptimizer",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/zeux/meshoptimizer",
+        "revision": "15f6c7ce4eb134f1f446f2a428d0c69ee2bede30"
+    }
+},
+{
+    "name": "volk",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/zeux/volk.git",
+        "revision": "5e23ac9b980aa906f2de187419d35e48278a9dd8"
+    }
+},
+{
+    "name": "glslang",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/glslang.git",
+        "revision": "965bd4d96613e57b75b125bff622b5fe6f671b96"
+    }
+}
+]

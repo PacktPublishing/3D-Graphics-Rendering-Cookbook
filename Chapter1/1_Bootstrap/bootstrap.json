@@ -1,0 +1,10 @@
+[
+{
+    "name": "vulkan",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
+        "revision": "v1.1.126"
+    }
+}
+]
