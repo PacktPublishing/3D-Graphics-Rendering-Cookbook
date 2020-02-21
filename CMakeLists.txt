@@ -83,6 +83,9 @@ endif()
 
 add_library(glad ${GLAD_SOURCES})
 
+# shared utils code for GL and Vulkan
+add_subdirectory(shared)
+
 add_subdirectory(Chapter1/2_CMake)
 
 add_subdirectory(Chapter2/01_GLFW)
@@ -95,3 +98,9 @@ add_subdirectory(Chapter2/07_Assimp)
 add_subdirectory(Chapter2/08_ETC2Comp)
 add_subdirectory(Chapter2/09_CppTaskflow)
 add_subdirectory(Chapter2/10_MeshOptimizer)
+
+add_subdirectory(Chapter3/GL01_APIWrapping)
+add_subdirectory(Chapter3/GL02_VtxPulling)
+add_subdirectory(Chapter3/GL03_CubeMap)
+add_subdirectory(Chapter3/VK01_GLSLang)
+add_subdirectory(Chapter3/VK02_DemoApp)
