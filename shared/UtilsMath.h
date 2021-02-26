@@ -4,6 +4,12 @@
 #include <cmath>
 #include <glm/glm.hpp>
 
+namespace Math
+{
+	static constexpr float PI = 3.14159265359f;
+	static constexpr float TWOPI = 6.28318530718f;
+}
+
 template <typename T>
 T clamp(T v, T a, T b)
 {
@@ -12,10 +18,22 @@ T clamp(T v, T a, T b)
 	return v;
 }
 
+inline float random01()
+{
+	return (float)rand() / (float)RAND_MAX;
+}
+
+inline float randomFloat(float min, float max)
+{
+	return min + (max- min) * random01();
+}
+
+inline glm::vec3 randomVec(const glm::vec3& min, const glm::vec3& max)
+{
+	return glm::vec3(randomFloat(min.x, max.x), randomFloat(min.y, max.y), randomFloat(min.z, max.z));
+}
+
 inline glm::vec3 randVec()
 {
-	const float x = 10.0f * (float)rand() / (float)RAND_MAX - 5.0f;
-	const float y = 10.0f * (float)rand() / (float)RAND_MAX - 5.0f;
-	const float z = 10.0f * (float)rand() / (float)RAND_MAX - 5.0f;
-	return glm::vec3(x, y, z);
+	return randomVec(glm::vec3(-5, -5, -5), glm::vec3(5, 5, 5));
 }

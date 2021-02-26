@@ -4,7 +4,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/KhronosGroup/Vulkan-Headers.git",
-        "revision": "v1.2.131"
+        "revision": "v1.2.153"
     }
 },
 {
@@ -28,7 +28,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/ocornut/imgui.git",
-        "revision" : "0bdc1453433ab0bb4d889c72ef9b0353ba3998aa"
+        "revision" : "v1.81"
     }
 },
 {
@@ -68,7 +68,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/assimp/assimp.git",
-        "revision": "a9f82dbe0b8a658003f93c7b5108ee4521458a18"
+        "revision": "26ebeaea5cb92f841fc5e2da9da379718223e831"
     }
 },
 {
@@ -80,11 +80,11 @@
     }
 },
 {
-    "name": "cpptaskflow",
+    "name": "taskflow",
     "source": {
         "type": "git",
-        "url": "https://github.com/cpp-taskflow/cpp-taskflow.git",
-        "revision": "e11de77e000a0103ac6fcf657d89130cb808aa63"
+        "url": "https://github.com/taskflow/taskflow.git",
+        "revision": "33e4f8c5f2fe4be59f62acbffd65204953f76d6a"
     }
 },
 {
@@ -92,7 +92,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/zeux/meshoptimizer",
-        "revision": "15f6c7ce4eb134f1f446f2a428d0c69ee2bede30"
+        "revision": "v0.15"
     }
 },
 {
@@ -100,7 +100,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/zeux/volk.git",
-        "revision": "5e23ac9b980aa906f2de187419d35e48278a9dd8"
+        "revision": "dfad1f517a7a84f8d3a89918c579b382c741aec3"
     }
 },
 {
@@ -108,7 +108,109 @@
     "source": {
         "type": "git",
         "url": "https://github.com/KhronosGroup/glslang.git",
-        "revision": "965bd4d96613e57b75b125bff622b5fe6f671b96"
+        "revision": "6abdde3ce5119e8ca3dd4e5351aa3a70f25bb689"
+    }
+},
+{
+    "name": "poisson-disk-generator",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/corporateshark/poisson-disk-generator"
+    }
+},
+{
+    "name": "glTF-Sample-Models",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/glTF-Sample-Models.git"
+    }
+},
+{
+    "name": "gli",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/g-truc/gli.git",
+        "revision": "dd17acf9cc7fc6e6abe9f9ec69949eeeee1ccd82"
+    }
+},
+{
+    "name": "bullet",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/bulletphysics/bullet3.git",
+        "revision": "3.08"
+    }
+},
+{
+    "name": "rapidjson",
+    "source": {
+        "type": "git",
+        "url": "https://github.com/Tencent/rapidjson.git",
+        "revision": "ce81bc9edfe773667a7a4454ba81dac72ed4364c"
+    }
+},
+{
+    "name": "ImGuizmo",
+    "source": {
+        "type": "git",
+         "url": "https://github.com/CedricGuillemet/ImGuizmo",
+         "revision" : "3a676c4efcab65817658d34eebb56cb91663d5ed"
+    }
+},
+{
+    "name": "bistro/PropTextures",
+    "source": {
+        "type": "archive",
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/PropTextures"
+    }
+},
+{
+    "name": "bistro/OtherTextures",
+    "source": {
+        "type": "archive",
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/OtherTextures"
+    }
+},
+{
+    "name": "bistro/BuildingTextures",
+    "source": {
+        "type": "archive",
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/BuildingTextures"
+    }
+},
+{
+    "name": "bistro/Interior",
+    "source": {
+        "type": "archive",
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Interior.zip"
+    }
+},
+{
+    "name": "bistro/Exterior",
+    "source": {
+        "type": "archive",
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Exterior.zip"
+    }
+},
+{
+    "name": "explosion0",
+    "source": {
+        "type": "archive",
+        "url": "https://unity3d.com/files/labs/downloads/vfx/assets01/Explosion00/Explosion00-sequence-tga.zip"
+    }
+},
+{
+    "name": "explosion1",
+    "source": {
+        "type": "archive",
+        "url": "https://unity3d.com/files/labs/downloads/vfx/assets01/Explosion01/Explosion01-sequence-tga.zip"
+    }
+},
+{
+    "name": "explosion2",
+    "source": {
+        "type": "archive",
+        "url": "https://unity3d.com/files/labs/downloads/vfx/assets01/Explosion02/Explosion02-sequence-tga.zip"
     }
 }
 ]

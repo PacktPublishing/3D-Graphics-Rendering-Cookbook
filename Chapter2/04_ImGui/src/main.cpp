@@ -140,7 +140,6 @@ int main()
 	GLuint perFrameDataBuffer;
 	glCreateBuffers(1, &perFrameDataBuffer);
 	glNamedBufferStorage(perFrameDataBuffer, sizeof(mat4), nullptr, GL_DYNAMIC_STORAGE_BIT);
-	glBindBuffer(GL_UNIFORM_BUFFER, perFrameDataBuffer);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer);
 
 	ImGui::CreateContext();

@@ -111,7 +111,6 @@ int main()
 	GLuint perFrameDataBuffer;
 	api.glCreateBuffers(1, &perFrameDataBuffer);
 	api.glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
-	api.glBindBuffer(GL_UNIFORM_BUFFER, perFrameDataBuffer);
 	api.glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
 
 	api.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);

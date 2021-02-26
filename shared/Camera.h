@@ -40,6 +40,7 @@ public:
 	CameraPositioner_FirstPerson(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up)
 	: cameraPosition_(pos)
 	, cameraOrientation_(glm::lookAt(pos, target, up))
+	, up_(up)
 	{}
 
 	void update(double deltaSeconds, const glm::vec2& mousePos, bool mousePressed)
@@ -47,9 +48,10 @@ public:
 		if (mousePressed)
 		{
 			const glm::vec2 delta = mousePos - mousePos_;
-			const glm::quat deltaQuat = glm::quat(glm::vec3(mouseSpeed_ * delta.y, mouseSpeed_ * delta.x, 0.0f));
+			const glm::quat deltaQuat = glm::quat(glm::vec3(-mouseSpeed_ * delta.y, mouseSpeed_ * delta.x, 0.0f));
 			cameraOrientation_ = deltaQuat * cameraOrientation_;
 			cameraOrientation_ = glm::normalize(cameraOrientation_);
+			setUpVector(up_);
 		}
 		mousePos_ = mousePos;
 
@@ -105,6 +107,8 @@ public:
 		cameraPosition_ = pos;
 	}
 
+	void resetMousePosition(const glm::vec2& p) { mousePos_ = p; };
+
 	void setUpVector(const glm::vec3& up)
 	{
 		const glm::mat4 view = getViewMatrix();
@@ -112,7 +116,10 @@ public:
 		cameraOrientation_ = glm::lookAt(cameraPosition_, cameraPosition_ + dir, up);
 	}
 
-	void resetMousePosition(const glm::vec2& p) { mousePos_ = p; };
+	inline void lookAt(const glm::vec3& pos, const glm::vec3& target, const glm::vec3& up) {
+		cameraPosition_ = pos;
+		cameraOrientation_ = glm::lookAt(pos, target, up);
+	}
 
 public:
 	struct Movement
@@ -139,6 +146,7 @@ private:
 	glm::vec3 cameraPosition_ = glm::vec3(0.0f, 10.0f, 10.0f);
 	glm::quat cameraOrientation_ = glm::quat(glm::vec3(0));
 	glm::vec3 moveSpeed_ = glm::vec3(0.0f);
+	glm::vec3 up_ = glm::vec3(0.0f, 0.0f, 1.0f);
 };
 
 class CameraPositioner_MoveTo final : public CameraPositionerInterface

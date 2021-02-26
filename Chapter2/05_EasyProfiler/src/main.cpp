@@ -143,7 +143,6 @@ int main(void)
 	GLuint perFrameDataBuffer;
 	glCreateBuffers(1, &perFrameDataBuffer);
 	glNamedBufferStorage(perFrameDataBuffer, kBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
-	glBindBuffer(GL_UNIFORM_BUFFER, perFrameDataBuffer);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kBufferSize);
 
 	EASY_END_BLOCK;

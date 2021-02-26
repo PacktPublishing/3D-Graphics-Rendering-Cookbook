@@ -199,10 +199,16 @@ def extractFile(filename, target_dir):
     log("Extracting file " + filename)
     stem, extension = os.path.splitext(os.path.basename(filename))
 
-    if extension == ".zip":
+    if extension == ".zip" or extension == "":
         zfile = zipfile.ZipFile(filename)
         extract_dir = os.path.commonprefix(zfile.namelist())
+        hasFolder = False
+        for fname in zfile.namelist():
+            if fname.find('/') != -1:
+                hasFolder = True
         extract_dir_local = ""
+        if not hasFolder: # special case, there are no folders in the archive
+            extract_dir = ""
         if extract_dir == "":  # deal with stupid zip files that don't contain a base directory
             extract_dir, extension2 = os.path.splitext(os.path.basename(filename))
             extract_dir_local = extract_dir
@@ -662,6 +668,7 @@ def main(argv):
             continue
 
         lib_dir = os.path.join(SRC_DIR, name)
+        lib_dir = lib_dir.replace(os.path.sep, '/')
 
         dlog("********** LIBRARY " + name + " **********")
         dlog("lib_dir = " + lib_dir + ")")
@@ -688,7 +695,7 @@ def main(argv):
             if os.path.exists(lib_dir):
                 shutil.rmtree(lib_dir)
         if not os.path.exists(lib_dir):
-            os.mkdir(lib_dir)
+            os.makedirs(lib_dir)
 
         try:
             # download source

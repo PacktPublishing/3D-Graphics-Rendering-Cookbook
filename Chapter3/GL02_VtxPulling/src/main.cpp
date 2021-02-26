@@ -13,7 +13,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 
-#include "shared/GLShader.h"
+#include "shared/glFramework/GLShader.h"
 #include "shared/debug.h"
 
 #include <vector>
@@ -77,7 +77,6 @@ int main(void)
 	GLuint perFrameDataBuffer;
 	glCreateBuffers(1, &perFrameDataBuffer);
 	glNamedBufferStorage(perFrameDataBuffer, kUniformBufferSize, nullptr, GL_DYNAMIC_STORAGE_BIT);
-	glBindBuffer(GL_UNIFORM_BUFFER, perFrameDataBuffer);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, perFrameDataBuffer, 0, kUniformBufferSize);
 
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -129,7 +128,6 @@ int main(void)
 	GLuint dataVertices;
 	glCreateBuffers(1, &dataVertices);
 	glNamedBufferStorage(dataVertices, kSizeVertices, vertices.data(), 0);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, dataVertices);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, dataVertices);
 
 	// texture
