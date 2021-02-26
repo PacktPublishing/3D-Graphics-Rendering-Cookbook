@@ -151,3 +151,7 @@ add_subdirectory(Chapter3/GL02_VtxPulling)
 add_subdirectory(Chapter3/GL03_CubeMap)
 add_subdirectory(Chapter3/VK01_GLSLang)
 add_subdirectory(Chapter3/VK02_DemoApp)
+
+add_subdirectory(Chapter4/GL01_Camera)
+add_subdirectory(Chapter4/GL02_FPS)
+add_subdirectory(Chapter4/VK01_DemoApp)
