@@ -6,7 +6,7 @@ layout (location=1) in vec3 barycoords;
 
 layout (location=0) out vec4 out_FragColor;
 
-layout (location = 0) uniform sampler2D texture0;
+layout (binding = 0) uniform sampler2D texture0;
 
 float edgeFactor(float thickness)
 {
