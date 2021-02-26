@@ -1,6 +1,7 @@
 #include "shared/scene/VtxData.h"
 
 #include <algorithm>
+#include <assert.h>
 #include <stdio.h>
 
 MeshFileHeader loadMeshData(const char* meshFile, std::vector<Mesh>& meshes, std::vector<uint32_t>& indexData, std::vector<float>& vertexData)
@@ -8,6 +9,8 @@ MeshFileHeader loadMeshData(const char* meshFile, std::vector<Mesh>& meshes, std
 	MeshFileHeader header;
 
 	FILE* f = fopen(meshFile, "rb");
+
+	assert(f); // Did you forget to run "Ch5_Tool05_MeshConvert"?
 
 	if (fread(&header, 1, sizeof(header), f) != sizeof(header))
 	{
