@@ -113,6 +113,7 @@ Mesh convertAIMesh(const aiMesh* m)
 	Mesh result = {
 		.streamCount = 1,
 		.indexOffset = g_indexOffset,
+		.vertexOffset = g_vertexOffset,
 		.vertexCount = m->mNumVertices,
 		.streamOffset = { g_vertexOffset * streamElementSize },
 		.streamElementSize = { streamElementSize }
