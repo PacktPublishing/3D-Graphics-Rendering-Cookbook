@@ -8,4 +8,4 @@ include_directories(../../shared)
 
 SETUP_APP(Ch5_Tool05_MeshConvert "Chapter 5")
 
-target_link_libraries(Ch5_Tool05_MeshConvert PRIVATE assimp meshoptimizer)
+target_link_libraries(Ch5_Tool05_MeshConvert PRIVATE assimp meshoptimizer SharedUtils)

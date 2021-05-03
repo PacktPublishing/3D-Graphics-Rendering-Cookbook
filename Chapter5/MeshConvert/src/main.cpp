@@ -5,10 +5,7 @@
 
 #include <meshoptimizer.h>
 
-std::vector<Mesh> g_meshes;
-
-std::vector<uint32_t> g_indexData;
-std::vector<float> g_vertexData;
+MeshData g_meshData;
 
 uint32_t g_indexOffset = 0;
 uint32_t g_vertexOffset = 0;
@@ -16,7 +13,6 @@ uint32_t g_vertexOffset = 0;
 constexpr uint32_t g_numElementsToStore = 3 + 3 + 2;
 
 float g_meshScale = 0.01f;
-
 bool g_calculateLODs = false;
 
 void processLods(std::vector<uint32_t>& indices, std::vector<float>& vertices, std::vector<std::vector<uint32_t>>& outLods)
@@ -54,7 +50,7 @@ void processLods(std::vector<uint32_t>& indices, std::vector<float>& vertices, s
 					indices.data(), indices.size(),
 					vertices.data(), verticesCountIn,
 					sizeof(float) * 3,
-					targetIndicesCount);
+					targetIndicesCount, 0.02f);
 				sloppy = true;
 				if (numOptIndices == indices.size()) break;
 			}
@@ -85,6 +81,8 @@ Mesh convertAIMesh(const aiMesh* m)
 
 	std::vector<std::vector<uint32_t>> outLods;
 
+	auto& vertices = g_meshData.vertexData_;
+
 	for (size_t i = 0; i != m->mNumVertices; i++)
 	{
 		const aiVector3D v = m->mVertices[i];
@@ -98,16 +96,16 @@ Mesh convertAIMesh(const aiMesh* m)
 			srcVertices.push_back(v.z);
 		}
 
-		g_vertexData.push_back(v.x * g_meshScale);
-		g_vertexData.push_back(v.y * g_meshScale);
-		g_vertexData.push_back(v.z * g_meshScale);
+		vertices.push_back(v.x * g_meshScale);
+		vertices.push_back(v.y * g_meshScale);
+		vertices.push_back(v.z * g_meshScale);
 
-		g_vertexData.push_back(t.x);
-		g_vertexData.push_back(1.0f - t.y);
+		vertices.push_back(t.x);
+		vertices.push_back(1.0f - t.y);
 
-		g_vertexData.push_back(n.x);
-		g_vertexData.push_back(n.y);
-		g_vertexData.push_back(n.z);
+		vertices.push_back(n.x);
+		vertices.push_back(n.y);
+		vertices.push_back(n.z);
 	}
 
 	Mesh result = {
@@ -138,7 +136,7 @@ Mesh convertAIMesh(const aiMesh* m)
 	for (size_t l = 0 ; l < outLods.size() ; l++)
 	{
 		for (size_t i = 0 ; i < outLods[l].size() ; i++)
-			g_indexData.push_back(outLods[l][i]);
+			g_meshData.indexData_.push_back(outLods[l][i]);
 
 		result.lodOffset[l] = numIndices;
 		numIndices += (int)outLods[l].size();
@@ -157,16 +155,17 @@ void loadFile(const char* fileName)
 {
 	printf("Loading '%s'...\n", fileName);
 
-	const unsigned int flags = 0
-		| aiProcess_JoinIdenticalVertices
-		| aiProcess_Triangulate
-		| aiProcess_GenSmoothNormals
-		| aiProcess_PreTransformVertices
-		| aiProcess_RemoveRedundantMaterials
-		| aiProcess_FindInvalidData
-		| aiProcess_FindInstances
-		| aiProcess_OptimizeMeshes
-	;
+	const unsigned int flags = 0 |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_Triangulate |
+		aiProcess_GenSmoothNormals |
+		aiProcess_LimitBoneWeights |
+		aiProcess_SplitLargeMeshes |
+		aiProcess_ImproveCacheLocality |
+		aiProcess_RemoveRedundantMaterials |
+		aiProcess_FindDegenerates |
+		aiProcess_FindInvalidData |
+		aiProcess_GenUVCoords;
 
 	const aiScene* scene = aiImportFile(fileName, flags);
 
@@ -176,58 +175,41 @@ void loadFile(const char* fileName)
 		exit(255);
 	}
 
-	g_meshes.reserve(scene->mNumMeshes);
+	g_meshData.meshes_.reserve(scene->mNumMeshes);
+	g_meshData.boxes_.reserve(scene->mNumMeshes);
 
 	for (unsigned int i = 0; i != scene->mNumMeshes; i++)
 	{
 		printf("\nConverting meshes %u/%u...", i + 1, scene->mNumMeshes);
 		fflush(stdout);
-
-		g_meshes.push_back(convertAIMesh(scene->mMeshes[i]));
+		g_meshData.meshes_.push_back(convertAIMesh(scene->mMeshes[i]));
 	}
-}
 
-inline void saveMeshesToFile(FILE* f)
-{
-	const MeshFileHeader header = {
-		.magicValue = 0x12345678,
-		.meshCount = (uint32_t)g_meshes.size(),
-		.dataBlockStartOffset = (uint32_t )(sizeof(MeshFileHeader) + g_meshes.size() * sizeof(Mesh)),
-		.indexDataSize = (uint32_t)(g_indexData.size() * sizeof(uint32_t)),
-		.vertexDataSize = (uint32_t)(g_vertexData.size() * sizeof(float))
-	};
-
-	fwrite(&header, 1, sizeof(header), f);
-	fwrite(g_meshes.data(), header.meshCount, sizeof(Mesh), f);
-
-	fwrite(g_indexData.data(), 1, header.indexDataSize, f);
-	fwrite(g_vertexData.data(), 1, header.vertexDataSize, f);
+	recalculateBoundingBoxes(g_meshData);
 }
 
 int main()
 {
 	loadFile("deps/src/bistro/Exterior/exterior.obj");
 
-	FILE *f = fopen("data/meshes/test.meshes", "wb");
-	saveMeshesToFile(f);
-	fclose(f);
-
 	std::vector<DrawData> grid;
 	g_vertexOffset = 0;
-	for (auto i = 0 ; i < g_meshes.size() ; i++)
+	for (auto i = 0 ; i < g_meshData.meshes_.size() ; i++)
 	{
 		grid.push_back(DrawData {
 			.meshIndex = (uint32_t)i,
 			.materialIndex = 0,
 			.LOD = 0,
-			.indexOffset = g_meshes[i].indexOffset,
+			.indexOffset = g_meshData.meshes_[i].indexOffset,
 			.vertexOffset = g_vertexOffset,
 			.transformIndex = 0
 		});
-		g_vertexOffset += g_meshes[i].vertexCount;
+		g_vertexOffset += g_meshData.meshes_[i].vertexCount;
 	}
 
-	f = fopen("data/meshes/test.meshes.drawdata", "wb");
+	saveMeshData("data/meshes/test.meshes", g_meshData);
+
+	FILE* f = fopen("data/meshes/test.meshes.drawdata", "wb");
 	fwrite(grid.data(), grid.size(), sizeof(DrawData), f);
 	fclose(f);
 

@@ -139,12 +139,10 @@ int main(void)
 	GLShader shaderFragment("data/shaders/chapter05/GL03_mesh_inst.frag");
 	GLProgram program(shaderVertex, shaderGeometry, shaderFragment);
 
-	std::vector<uint32_t> indexData;
-	std::vector<float> vertexData;
-	std::vector<Mesh> meshes;
-	const MeshFileHeader header = loadMeshData("data/meshes/test.meshes", meshes, indexData, vertexData);
+	MeshData meshData;
+	const MeshFileHeader header = loadMeshData("data/meshes/test.meshes", meshData);
 
-	GLMesh mesh(header, meshes.data(), indexData.data(), vertexData.data());
+	GLMesh mesh(header, meshData.meshes_.data(), meshData.indexData_.data(), meshData.vertexData_.data());
 
 	// model matrices
 	const mat4 m(glm::scale(mat4(1.0f), vec3(2.0f)));
