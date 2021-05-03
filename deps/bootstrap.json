@@ -68,7 +68,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/assimp/assimp.git",
-        "revision": "26ebeaea5cb92f841fc5e2da9da379718223e831"
+        "revision": "a9f82dbe0b8a658003f93c7b5108ee4521458a18"
     }
 },
 {
@@ -84,7 +84,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/taskflow/taskflow.git",
-        "revision": "33e4f8c5f2fe4be59f62acbffd65204953f76d6a"
+        "revision": "v3.1.0"
     }
 },
 {
@@ -92,7 +92,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/zeux/meshoptimizer",
-        "revision": "v0.15"
+        "revision": "v0.16"
     }
 },
 {
