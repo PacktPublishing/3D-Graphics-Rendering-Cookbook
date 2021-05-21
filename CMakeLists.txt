@@ -175,3 +175,8 @@ add_subdirectory(Chapter6/VK03_ComputeTexture)
 add_subdirectory(Chapter6/VK04_ComputeMesh)
 add_subdirectory(Chapter6/VK05_PBR)
 add_subdirectory(Chapter6/Util01_FilterEnvmap)
+
+add_subdirectory(Chapter7/GL01_LargeScene)
+add_subdirectory(Chapter7/SceneConverter)
+add_subdirectory(Chapter7/VK01_SceneGraph)
+add_subdirectory(Chapter7/VK02_LargeScene)
