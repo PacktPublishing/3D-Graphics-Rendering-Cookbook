@@ -1,23 +1,48 @@
 #include "shared/vkFramework/MultiRenderer.h"
 
+#include <stb/stb_image.h>
+
 VKSceneData::VKSceneData(VulkanRenderContext& ctx,
 	const char* meshFile,
 	const char* sceneFile,
 	const char* materialFile,
 	VulkanTexture envMap,
-	VulkanTexture irradienceMap)
+	VulkanTexture irradianceMap,
+	bool asyncLoad)
 : ctx(ctx)
-, envMapIrradience_(irradienceMap)
+, envMapIrradiance_(irradianceMap)
 , envMap_(envMap)
 {
 	brdfLUT_ = ctx.resources.loadKTX("data/brdfLUT.ktx");
 
-	std::vector<std::string> textureFiles;
-	loadMaterials(materialFile, materials_, textureFiles);
+	loadMaterials(materialFile, materials_, textureFiles_);
 
 	std::vector<VulkanTexture> textures;
-	for (const auto& f: textureFiles)
-		textures.push_back(ctx.resources.loadTexture2D(f.c_str()));
+	for (const auto& f: textureFiles_) {
+		auto t = asyncLoad ? ctx.resources.addSolidRGBATexture() : ctx.resources.loadTexture2D(f.c_str());
+		textures.push_back(t);
+#if 0
+		if (t.image.image != nullptr)
+			setVkImageName(ctx.vkDev, t.image.image, f.c_str());
+#endif
+	}
+
+	if (asyncLoad)
+	{
+		loadedFiles_.reserve(textureFiles_.size());
+
+		taskflow_.for_each_index(0u, (uint32_t)textureFiles_.size(), 1u, [this](int idx)
+			{
+				int w, h;
+				const uint8_t* img = stbi_load(this->textureFiles_[idx].c_str(), &w, &h, nullptr, STBI_rgb_alpha);
+
+				std::lock_guard lock(loadedFilesMutex_);
+				loadedFiles_.emplace_back(LoadedImageData { idx, w, h, img });
+			}
+		);
+
+		executor_.run(taskflow_);
+	}
 
 	allMaterialTextures = fsTextureArrayAttachment(textures);
 
@@ -31,11 +56,9 @@ VKSceneData::VKSceneData(VulkanRenderContext& ctx,
 
 void VKSceneData::loadMeshes(const char* meshFile)
 {
-	std::vector<uint32_t> indexData;
-	std::vector<float> vertexData;
-	MeshFileHeader header = loadMeshData(meshFile, meshes_, indexData, vertexData);
+	MeshFileHeader header = loadMeshData(meshFile, meshData_);
 
-	uint32_t indexBufferSize = header.indexDataSize;
+	const uint32_t indexBufferSize = header.indexDataSize;
 	uint32_t vertexBufferSize = header.vertexDataSize;
 
 	const uint32_t offsetAlignment = getVulkanBufferAlignment(ctx.vkDev);
@@ -43,13 +66,13 @@ void VKSceneData::loadMeshes(const char* meshFile)
 	{
 		const size_t numFloats = (offsetAlignment - (vertexBufferSize & (offsetAlignment - 1))) / sizeof(float);
 		for (size_t i = 0; i != numFloats; i++)
-			vertexData.push_back(0);
+			meshData_.vertexData_.push_back(0);
 		vertexBufferSize = (vertexBufferSize + offsetAlignment) & ~(offsetAlignment - 1);
 	}
 
 	VulkanBuffer storage = ctx.resources.addStorageBuffer(vertexBufferSize + indexBufferSize);
-	uploadBufferData(ctx.vkDev, storage.memory, 0, vertexData.data(), vertexBufferSize);
-	uploadBufferData(ctx.vkDev, storage.memory, vertexBufferSize, indexData.data(), indexBufferSize);
+	uploadBufferData(ctx.vkDev, storage.memory, 0, meshData_.vertexData_.data(), vertexBufferSize);
+	uploadBufferData(ctx.vkDev, storage.memory, vertexBufferSize, meshData_.indexData_.data(), indexBufferSize);
 
 	vertexBuffer_ = BufferAttachment { .dInfo = { .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderStageFlags = VK_SHADER_STAGE_VERTEX_BIT }, .buffer = storage, .offset = 0, .size = vertexBufferSize };
 	indexBuffer_  = BufferAttachment { .dInfo = { .type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, .shaderStageFlags = VK_SHADER_STAGE_VERTEX_BIT }, .buffer = storage, .offset = vertexBufferSize, .size = indexBufferSize };
@@ -71,8 +94,8 @@ void VKSceneData::loadScene(const char* sceneFile)
 				.meshIndex = c.second,
 				.materialIndex = material->second,
 				.LOD = 0,
-				.indexOffset = meshes_[c.second].indexOffset,
-				.vertexOffset = meshes_[c.second].vertexOffset,
+				.indexOffset = meshData_.meshes_[c.second].indexOffset,
+				.vertexOffset = meshData_.meshes_[c.second].vertexOffset,
 				.transformIndex = c.first
 			});
 	}
@@ -116,7 +139,9 @@ MultiRenderer::MultiRenderer(
 	const char* vertShaderFile,
 	const char* fragShaderFile,
 	const std::vector<VulkanTexture>& outputs,
-	RenderPass screenRenderPass)
+	RenderPass screenRenderPass,
+	const std::vector<BufferAttachment>& auxBuffers,
+	const std::vector<TextureAttachment>& auxTextures)
 : Renderer(ctx)
 , sceneData_(sceneData)
 {
@@ -132,15 +157,18 @@ MultiRenderer::MultiRenderer(
 	descriptorSets_.resize(imgCount);
 
 	const uint32_t shapesSize = (uint32_t)sceneData_.shapes_.size() * sizeof(DrawData);
-	const uint32_t uniformBufferSize = sizeof(mat4) + sizeof(vec4);
+	const uint32_t uniformBufferSize = sizeof(ubo_);
 
 	std::vector<TextureAttachment> textureAttachments;
 	if (sceneData_.envMap_.width)
 		textureAttachments.push_back(fsTextureAttachment(sceneData_.envMap_));
-	if (sceneData_.envMapIrradience_.width)
-		textureAttachments.push_back(fsTextureAttachment(sceneData_.envMapIrradience_));
+	if (sceneData_.envMapIrradiance_.width)
+		textureAttachments.push_back(fsTextureAttachment(sceneData_.envMapIrradiance_));
 	if (sceneData_.brdfLUT_.width)
 		textureAttachments.push_back(fsTextureAttachment(sceneData_.brdfLUT_));
+
+	for (const auto& t: auxTextures)
+		textureAttachments.push_back(t);
 
 	DescriptorSetInfo dsInfo = {
 		.buffers = {
@@ -154,6 +182,9 @@ MultiRenderer::MultiRenderer(
 		.textures = textureAttachments,
 		.textureArrays = { sceneData_.allMaterialTextures }
 	};
+
+	for (const auto& b: auxBuffers)
+		dsInfo.buffers.push_back(b);
 
 	descriptorSetLayout_ = ctx.resources.addDescriptorSetLayout(dsInfo);
 	descriptorPool_ = ctx.resources.addDescriptorPool(dsInfo, (uint32_t)imgCount);
@@ -191,8 +222,7 @@ void MultiRenderer::fillCommandBuffer(VkCommandBuffer commandBuffer, size_t curr
 
 void MultiRenderer::updateBuffers(size_t imageIndex)
 {
-	updateUniformBuffer((uint32_t)imageIndex, 0, sizeof(glm::mat4), glm::value_ptr(proj_ * view_ * model_));
-	updateUniformBuffer((uint32_t)imageIndex, sizeof(glm::mat4), 4 * sizeof(float), glm::value_ptr(cameraPos_));
+	updateUniformBuffer((uint32_t)imageIndex, 0, sizeof(ubo_), &ubo_);
 }
 
 void MultiRenderer::updateIndirectBuffers(size_t currentImage, bool* visibility)
@@ -208,11 +238,33 @@ void MultiRenderer::updateIndirectBuffers(size_t currentImage, bool* visibility)
 
 		const uint32_t lod = sceneData_.shapes_[i].LOD;
 		data[i] = {
-			.vertexCount = sceneData_.meshes_[j].getLODIndicesCount(lod),
+			.vertexCount = sceneData_.meshData_.meshes_[j].getLODIndicesCount(lod),
 			.instanceCount = visibility ? (visibility[i] ? 1u : 0u) : 1u,
 			.firstVertex = 0,
 			.firstInstance = i
 		};
 	}
 	vkUnmapMemory(ctx_.vkDev.device, indirect_[currentImage].memory);
+}
+
+bool MultiRenderer::checkLoadedTextures()
+{
+	VKSceneData::LoadedImageData data;
+
+	{
+		std::lock_guard lock(sceneData_.loadedFilesMutex_);
+
+		if (sceneData_.loadedFiles_.empty())
+			return false;
+
+		data = sceneData_.loadedFiles_.back();
+
+		sceneData_.loadedFiles_.pop_back();
+	}
+
+	this->updateTexture(data.index_, ctx_.resources.addRGBATexture(data.w_, data.h_, const_cast<uint8_t*>(data.img_)));
+
+	stbi_image_free((void*)data.img_);
+
+	return true;
 }

@@ -3,6 +3,7 @@
 #include "shared/glFramework/GLShader.h"
 
 #include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -110,6 +111,7 @@ public:
 		}
 
 		glScissor(0, 0, width, height);
+		glDisable(GL_SCISSOR_TEST);
 	}
 
 private:
@@ -162,10 +164,14 @@ void imguiTextureWindowGL(const char* title, uint32_t texId)
 {
 	ImGui::Begin(title, nullptr);
 
-	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+	const ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+	const ImVec2 vMax = ImGui::GetWindowContentRegionMax();
 
-	ImGui::Image((void*)(intptr_t)texId, ImVec2(vMax.x - vMin.x, vMax.y - vMin.y));
+	ImGui::Image(
+		(void*)(intptr_t)texId,
+		ImVec2(vMax.x - vMin.x, vMax.y - vMin.y),
+		ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f)
+	);
 
 	ImGui::End();
 }

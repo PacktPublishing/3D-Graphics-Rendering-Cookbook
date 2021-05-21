@@ -196,7 +196,7 @@ struct CameraApp: public VulkanApp
 
 	glm::mat4 getDefaultProjection() const {
 		const float ratio = ctx_.vkDev.framebufferWidth / (float)ctx_.vkDev.framebufferHeight;
-		return glm::perspective(glm::pi<float>() / 4.0f, ratio, 0.1f, 1000.0f);
+		return glm::perspective(45.0f, ratio, 0.1f, 1000.0f);
 	}
 
 	virtual void handleKey(int key, bool pressed) override;

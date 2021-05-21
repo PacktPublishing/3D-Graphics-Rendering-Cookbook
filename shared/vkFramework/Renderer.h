@@ -79,6 +79,13 @@ struct Renderer
 	uint32_t processingWidth;
 	uint32_t processingHeight;
 
+	// Updating individual textures (9 is the binding in our Chapter7-Chapter9 IBL scene shaders)
+	void updateTexture(uint32_t textureIndex, VulkanTexture newTexture, uint32_t bindingIndex = 9)
+	{
+		for (auto ds: descriptorSets_)
+			updateTextureInDescriptorSetArray(ctx_.vkDev, ds, newTexture, textureIndex, 9);
+	}
+
 protected:
 	VulkanRenderContext& ctx_;
 

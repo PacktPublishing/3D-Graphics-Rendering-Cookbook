@@ -7,6 +7,7 @@ class GLTexture
 public:
 	GLTexture(GLenum type, const char* fileName);
 	GLTexture(GLenum type, int width, int height, GLenum internalFormat);
+	GLTexture(int w, int h, const void* img);
 	~GLTexture();
 	GLTexture(const GLTexture&) = delete;
 	GLTexture(GLTexture&&);

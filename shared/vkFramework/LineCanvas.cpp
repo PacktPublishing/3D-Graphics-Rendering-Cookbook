@@ -103,7 +103,7 @@ void LineCanvas::plane3d(const vec3& o, const vec3& v1, const vec3& v2, int n1, 
 	}
 }
 
-void drawBox3d(LineCanvas& canvas, const glm::mat4& m, const glm::vec3& size)
+static void drawBox3d_internal(LineCanvas& canvas, const glm::mat4& m, const glm::vec3& size, const glm::vec4& c)
 {
 	std::array<vec3, 8> pts = {
 		vec3(+size.x, +size.y, +size.z),
@@ -119,20 +119,25 @@ void drawBox3d(LineCanvas& canvas, const glm::mat4& m, const glm::vec3& size)
 	for (auto& p: pts)
 		p = vec3(m * vec4(p, 1.f));
 
-	canvas.line(pts[0], pts[1], vec4(0,0,0,1));
-	canvas.line(pts[2], pts[3], vec4(0,0,0,1));
-	canvas.line(pts[4], pts[5], vec4(0,0,0,1));
-	canvas.line(pts[6], pts[7], vec4(0,0,0,1));
+	canvas.line(pts[0], pts[1], c);
+	canvas.line(pts[2], pts[3], c);
+	canvas.line(pts[4], pts[5], c);
+	canvas.line(pts[6], pts[7], c);
 
-	canvas.line(pts[0], pts[2], vec4(0,0,0,1));
-	canvas.line(pts[1], pts[3], vec4(0,0,0,1));
-	canvas.line(pts[4], pts[6], vec4(0,0,0,1));
-	canvas.line(pts[5], pts[7], vec4(0,0,0,1));
+	canvas.line(pts[0], pts[2], c);
+	canvas.line(pts[1], pts[3], c);
+	canvas.line(pts[4], pts[6], c);
+	canvas.line(pts[5], pts[7], c);
 
-	canvas.line(pts[0], pts[4], vec4(0,0,0,1));
-	canvas.line(pts[1], pts[5], vec4(0,0,0,1));
-	canvas.line(pts[2], pts[6], vec4(0,0,0,1));
-	canvas.line(pts[3], pts[7], vec4(0,0,0,1));
+	canvas.line(pts[0], pts[4], c);
+	canvas.line(pts[1], pts[5], c);
+	canvas.line(pts[2], pts[6], c);
+	canvas.line(pts[3], pts[7], c);
+}
+
+void drawBox3d(LineCanvas& canvas, const glm::mat4& m, const BoundingBox& box, const glm::vec4& color)
+{
+	drawBox3d_internal(canvas, m * glm::translate(glm::mat4(1.f), .5f * (box.min_ + box.max_)), 0.5f * vec3(box.max_ - box.min_), color);
 }
 
 void renderCameraFrustum(LineCanvas& C, const mat4& camView, const mat4& camProj, const vec4& camColor)

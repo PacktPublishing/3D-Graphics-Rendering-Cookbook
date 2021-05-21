@@ -109,7 +109,7 @@ void MultiMeshRenderer::updateIndirectBuffers(VulkanRenderDevice& vkDev, size_t 
 		const uint32_t j = shapes[i].meshIndex;
 		const uint32_t lod = shapes[i].LOD;
 		data[i] = {
-			.vertexCount = meshes[j].getLODIndicesCount(lod),
+			.vertexCount = meshData_.meshes_[j].getLODIndicesCount(lod),
 			.instanceCount = visibility ? (visibility[i] ? 1u : 0u) : 1u,
 			.firstVertex = 0,
 			.firstInstance = i
@@ -167,9 +167,7 @@ MultiMeshRenderer::MultiMeshRenderer(
 
 	loadDrawData(drawDataFile);
 
-	std::vector<uint32_t> indexData;
-	std::vector<float> vertexData;
-	MeshFileHeader header = loadMeshData(meshFile, meshes, indexData, vertexData);
+	MeshFileHeader header = loadMeshData(meshFile, meshData_);
 
 	const uint32_t indirectDataSize = maxShapes_ * sizeof(VkDrawIndirectCommand);
 	maxDrawDataSize_ = maxShapes_ * sizeof(DrawData);
@@ -204,7 +202,7 @@ MultiMeshRenderer::MultiMeshRenderer(
 	{
 		int floats = (offsetAlignment - (maxVertexBufferSize_ & (offsetAlignment - 1))) / sizeof(float);
 		for (int ii = 0; ii < floats; ii++)
-			vertexData.push_back(0);
+			meshData_.vertexData_.push_back(0);
 		maxVertexBufferSize_ = (maxVertexBufferSize_ + offsetAlignment) & ~(offsetAlignment - 1);
 	}
 
@@ -217,7 +215,7 @@ MultiMeshRenderer::MultiMeshRenderer(
 		exit(EXIT_FAILURE);
 	}
 
-	updateGeometryBuffers(vkDev, header.vertexDataSize, header.indexDataSize, vertexData.data(), indexData.data());
+	updateGeometryBuffers(vkDev, header.vertexDataSize, header.indexDataSize, meshData_.vertexData_.data(), meshData_.indexData_.data());
 
 	for (size_t i = 0; i < vkDev.swapchainImages.size(); i++)
 	{

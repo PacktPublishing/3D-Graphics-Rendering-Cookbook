@@ -28,7 +28,7 @@ struct QuadProcessor: public VulkanShaderProcessor
 	QuadProcessor(VulkanRenderContext& ctx, const DescriptorSetInfo& dsInfo,
 		const std::vector<VulkanTexture>& outputs, const char* shaderFile):
 		VulkanShaderProcessor(ctx, ctx.pipelineParametersForOutputs(outputs),  dsInfo,
-			std::vector<const char*> { "data/shaders/chapter08/quad.vert", shaderFile },
+			std::vector<const char*> { "data/shaders/chapter08/VK02_Quad.vert", shaderFile },
 			outputs, 6 * 4, outputs.empty() ? ctx.screenRenderPass : RenderPass())
 	{}
 };

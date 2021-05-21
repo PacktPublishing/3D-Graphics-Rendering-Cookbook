@@ -27,7 +27,7 @@ GLTexture::GLTexture(GLenum type, int width, int height, GLenum internalFormat)
 	glTextureParameteri(handle_, GL_TEXTURE_MAX_LEVEL, 0);
 	glTextureParameteri(handle_, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTextureParameteri(handle_, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureStorage2D(handle_, 1, internalFormat, width, height);
+	glTextureStorage2D(handle_, getNumMipMapLevels2D(width, height), internalFormat, width, height);
 }
 
 GLTexture::GLTexture(GLenum type, const char* fileName)
@@ -114,6 +114,22 @@ GLTexture::GLTexture(GLenum type, const char* fileName)
 		assert(false);
 	}
 
+	handleBindless_ = glGetTextureHandleARB(handle_);
+	glMakeTextureHandleResidentARB(handleBindless_);
+}
+
+GLTexture::GLTexture(int w, int h, const void* img)
+	: type_(GL_TEXTURE_2D)
+{
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glCreateTextures(type_, 1, &handle_);
+	int numMipmaps = getNumMipMapLevels2D(w, h);
+	glTextureStorage2D(handle_, numMipmaps, GL_RGBA8, w, h);
+	glTextureSubImage2D(handle_, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, img);
+	glGenerateTextureMipmap(handle_);
+	glTextureParameteri(handle_, GL_TEXTURE_MAX_LEVEL, numMipmaps - 1);
+	glTextureParameteri(handle_, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(handle_, GL_TEXTURE_MAX_ANISOTROPY, 16);
 	handleBindless_ = glGetTextureHandleARB(handle_);
 	glMakeTextureHandleResidentARB(handleBindless_);
 }

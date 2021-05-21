@@ -65,7 +65,7 @@ private:
 
 	/* DrawData loaded from file. Converted to indirectBuffers[] and uploaded to drawDataBuffers[] */
 	std::vector<DrawData> shapes;
-	std::vector<Mesh> meshes; 
+	MeshData meshData_;
 
 	bool createDescriptorSet(VulkanRenderDevice& vkDev);
 

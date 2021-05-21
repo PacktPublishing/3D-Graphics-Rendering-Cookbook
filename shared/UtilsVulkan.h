@@ -187,7 +187,7 @@ size_t createSwapchainImages(VkDevice device, VkSwapchainKHR swapchain, std::vec
 
 VkResult createSemaphore(VkDevice device, VkSemaphore* outSemaphore);
 
-bool createTextureSampler(VkDevice device, VkSampler* sampler, VkFilter minFilter = VK_FILTER_LINEAR, VkFilter maxFilter = VK_FILTER_LINEAR);
+bool createTextureSampler(VkDevice device, VkSampler* sampler, VkFilter minFilter = VK_FILTER_LINEAR, VkFilter maxFilter = VK_FILTER_LINEAR, VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 bool createDescriptorPool(VulkanRenderDevice& vkDev, uint32_t uniformBufferCount, uint32_t storageBufferCount, uint32_t samplerCount, VkDescriptorPool* descriptorPool);
 
@@ -293,6 +293,7 @@ VkCommandBuffer beginSingleTimeCommands(VulkanRenderDevice& vkDev);
 void endSingleTimeCommands(VulkanRenderDevice& vkDev, VkCommandBuffer commandBuffer);
 void copyBuffer(VulkanRenderDevice& vkDev, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
+void transitionImageLayoutCmd(VkCommandBuffer commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount = 1, uint32_t mipLevels = 1);
 
 bool initVulkanRenderDevice(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, std::function<bool(VkPhysicalDevice)> selector, VkPhysicalDeviceFeatures deviceFeatures);
 bool initVulkanRenderDevice2(VulkanInstance& vk, VulkanRenderDevice& vkDev, uint32_t width, uint32_t height, std::function<bool(VkPhysicalDevice)> selector, VkPhysicalDeviceFeatures2 deviceFeatures2);
@@ -397,3 +398,13 @@ inline bool isDepthFormat(VkFormat fmt) {
 		(fmt == VK_FORMAT_D24_UNORM_S8_UINT) ||
 		(fmt == VK_FORMAT_D32_SFLOAT_S8_UINT);
 }
+
+bool setVkObjectName(VulkanRenderDevice& vkDev, void* object, VkObjectType objType, const char* name);
+
+inline bool setVkImageName(VulkanRenderDevice& vkDev, void* object, const char* name)
+{
+	return setVkObjectName(vkDev, object, VK_OBJECT_TYPE_IMAGE, name);
+}
+
+/* This routine updates one texture discriptor in one descriptor set */
+void updateTextureInDescriptorSetArray(VulkanRenderDevice& vkDev, VkDescriptorSet ds, VulkanTexture t, uint32_t textureIndex, uint32_t bindingIdx);

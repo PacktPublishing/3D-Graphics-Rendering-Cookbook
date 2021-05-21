@@ -7,10 +7,10 @@
 #include <string>
 
 GLShader::GLShader(const char* fileName)
-: GLShader(GLShaderTypeFromFileName(fileName), readShaderFile(fileName).c_str())
+: GLShader(GLShaderTypeFromFileName(fileName), readShaderFile(fileName).c_str(), fileName)
 {}
 
-GLShader::GLShader(GLenum type, const char* text)
+GLShader::GLShader(GLenum type, const char* text, const char* debugFileName)
 	: type_(type)
 	, handle_(glCreateShader(type))
 {
@@ -23,7 +23,7 @@ GLShader::GLShader(GLenum type, const char* text)
 
 	if (length)
 	{
-		printf("%s\n", buffer);
+		printf("%s (File: %s)\n", buffer, debugFileName);
 		printShaderSource(text);
 		assert(false);
 	}
@@ -44,6 +44,14 @@ void printProgramInfoLog(GLuint handle)
 		printf("%s\n", buffer);
 		assert(false);
 	}
+}
+
+GLProgram::GLProgram(const GLShader& a)
+	: handle_(glCreateProgram())
+{
+	glAttachShader(handle_, a.getHandle());
+	glLinkProgram(handle_);
+	printProgramInfoLog(handle_);
 }
 
 GLProgram::GLProgram(const GLShader& a, const GLShader& b)

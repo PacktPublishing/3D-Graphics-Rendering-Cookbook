@@ -37,7 +37,7 @@ CubemapRenderer::CubemapRenderer(VulkanRenderContext& ctx,
 		ctx.resources.updateDescriptorSet(descriptorSets_[i], dsInfo);
 	}
 
-	initPipeline({ "data/shaders/chapter08/VK0x_CubeMap.vert", "data/shaders/chapter08/VK0x_CubeMap.frag" }, pInfo);
+	initPipeline({ "data/shaders/chapter08/VK03_CubeMap.vert", "data/shaders/chapter08/VK03_CubeMap.frag" }, pInfo);
 }
 
 void CubemapRenderer::updateBuffers(size_t currentImage)

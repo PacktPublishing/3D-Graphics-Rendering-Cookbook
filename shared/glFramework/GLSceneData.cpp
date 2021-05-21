@@ -2,7 +2,7 @@
 
 static uint64_t getTextureHandleBindless(uint64_t idx, const std::vector<GLTexture>& textures)
 {
-	if (idx == 0xFFFFFFFF) return 0;
+	if (idx == INVALID_TEXTURE) return 0;
 
 	return textures[idx].getHandleBindless();
 }
@@ -12,7 +12,7 @@ GLSceneData::GLSceneData(
 	const char* sceneFile,
 	const char* materialFile)
 {
-	header_ = loadMeshData(meshFile, meshes_, indexData_, vertexData_);
+	header_ = loadMeshData(meshFile, meshData_);
 	loadScene(sceneFile);
 
 	std::vector<std::string> textureFiles;
@@ -47,8 +47,8 @@ void GLSceneData::loadScene(const char* sceneFile)
 					.meshIndex = c.second,
 					.materialIndex = material->second,
 					.LOD = 0,
-					.indexOffset = meshes_[c.second].indexOffset,
-					.vertexOffset = meshes_[c.second].vertexOffset,
+					.indexOffset = meshData_.meshes_[c.second].indexOffset,
+					.vertexOffset = meshData_.meshes_[c.second].vertexOffset,
 					.transformIndex = c.first
 				});
 		}

@@ -62,5 +62,5 @@ QuadRenderer::QuadRenderer(VulkanRenderContext& ctx,
 		ctx.resources.updateDescriptorSet(descriptorSets_[i], dsInfo);
 	}
 
-	initPipeline({ "data/shaders/chapter08/VKArrayTextures.vert", "data/shaders/chapter08/VKArrayTextures.frag" }, pInfo);
+	initPipeline({ "data/shaders/chapter08/VK02_QuadRenderer.vert", "data/shaders/chapter08/VK02_QuadRenderer.frag" }, pInfo);
 }

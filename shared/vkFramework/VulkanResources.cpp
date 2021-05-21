@@ -11,6 +11,10 @@
 #include <gli/texture2d.hpp>
 #include <gli/load_ktx.hpp>
 
+#include <algorithm>
+
+glslang_stage_t glslangShaderStageFromFileName(const char* fileName);
+
 VulkanResources::~VulkanResources()
 {
 	for (auto& t: allTextures)
@@ -44,6 +48,9 @@ VulkanResources::~VulkanResources()
 
 	for (auto& dpool: allDPools)
 		vkDestroyDescriptorPool(vkDev.device, dpool, nullptr);
+
+	for (auto m: shaderModules)
+		vkDestroyShaderModule(vkDev.device, m.shaderModule, nullptr);
 }
 
 VulkanTexture VulkanResources::loadCubeMap(const char* fileName, uint32_t mipLevels)
@@ -58,10 +65,14 @@ VulkanTexture VulkanResources::loadCubeMap(const char* fileName, uint32_t mipLev
 		createCubeTextureImage(vkDev, fileName, cubemap.image.image, cubemap.image.imageMemory, &w, &h);
 
 	createImageView(vkDev.device, cubemap.image.image, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &cubemap.image.imageView, VK_IMAGE_VIEW_TYPE_CUBE, 6, mipLevels);
+
 	createTextureSampler(vkDev.device, &cubemap.sampler);
+
+	cubemap.format = VK_FORMAT_R32G32B32A32_SFLOAT;
 
 	cubemap.width = w;
 	cubemap.height = h;
+	cubemap.depth = 1;
 
 	allTextures.push_back(cubemap);
 	return cubemap;
@@ -116,7 +127,62 @@ VulkanTexture VulkanResources::loadTexture2D(const char* filename)
 	return tex;
 }
 
-VulkanTexture VulkanResources::addColorTexture(int texWidth, int texHeight, VkFormat colorFormat, VkFilter minFilter, VkFilter maxFilter)
+VulkanTexture VulkanResources::addRGBATexture(int texWidth, int texHeight, void* data)
+{
+	VulkanTexture tex;
+	tex.width  = texWidth;
+	tex.height = texWidth;
+	tex.depth  = 1;
+	tex.format = VK_FORMAT_R8G8B8A8_UNORM;
+	if (!createTextureImageFromData(vkDev, tex.image.image, tex.image.imageMemory,
+		data, texWidth, texHeight, tex.format))
+	{
+		printf("Cannot create solid texture\n");
+		exit(EXIT_FAILURE);
+	}
+
+	transitionImageLayout(vkDev, tex.image.image, tex.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	if (!createImageView(vkDev.device, tex.image.image, tex.format, VK_IMAGE_ASPECT_COLOR_BIT, &tex.image.imageView))
+	{
+		printf("Cannot create image view for 2d texture\n");
+		exit(EXIT_FAILURE);
+	}
+
+	createTextureSampler(vkDev.device, &tex.sampler);
+	allTextures.push_back(tex);
+	return tex;
+}
+
+VulkanTexture VulkanResources::addSolidRGBATexture(uint32_t color)
+{
+	VulkanTexture tex;
+	tex.width  = 1;
+	tex.height = 1;
+	tex.depth  = 1;
+	tex.format = VK_FORMAT_R8G8B8A8_UNORM;
+	if (!createTextureImageFromData(vkDev, tex.image.image, tex.image.imageMemory,
+		&color, 1, 1, tex.format))
+	{
+		printf("Cannot create solid texture\n");
+		exit(EXIT_FAILURE);
+	}
+
+	transitionImageLayout(vkDev, tex.image.image, tex.format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+	if (!createImageView(vkDev.device, tex.image.image, tex.format, VK_IMAGE_ASPECT_COLOR_BIT, &tex.image.imageView))
+	{
+		printf("Cannot create image view for solid texture\n");
+		exit(EXIT_FAILURE);
+	}
+
+	createTextureSampler(vkDev.device, &tex.sampler);
+	allTextures.push_back(tex);
+
+	return tex;
+}
+
+VulkanTexture VulkanResources::addColorTexture(int texWidth, int texHeight, VkFormat colorFormat, VkFilter minFilter, VkFilter maxFilter, VkSamplerAddressMode addressMode)
 {
 	const uint32_t w = (texWidth  > 0) ? texWidth  : vkDev.framebufferWidth;
 	const uint32_t h = (texHeight > 0) ? texHeight : vkDev.framebufferHeight;
@@ -138,7 +204,7 @@ VulkanTexture VulkanResources::addColorTexture(int texWidth, int texHeight, VkFo
 	}
 
 	createImageView(vkDev.device, res.image.image, colorFormat, VK_IMAGE_ASPECT_COLOR_BIT, &res.image.imageView);
-	createTextureSampler(vkDev.device, &res.sampler, minFilter, maxFilter);
+	createTextureSampler(vkDev.device, &res.sampler, minFilter, maxFilter, addressMode);
 
 	transitionImageLayout(vkDev, res.image.image, colorFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
@@ -280,13 +346,175 @@ VkPipeline VulkanResources::addComputePipeline(const char* shaderFile, VkPipelin
 	return pipeline;
 }
 
+bool VulkanResources::createGraphicsPipeline(
+	VulkanRenderDevice& vkDev,
+	VkRenderPass renderPass, VkPipelineLayout pipelineLayout,
+	const std::vector<const char*>& shaderFiles,
+	VkPipeline* pipeline,
+	VkPrimitiveTopology topology,
+	bool useDepth,
+	bool useBlending,
+	bool dynamicScissorState,
+	int32_t customWidth,
+	int32_t customHeight,
+	uint32_t numPatchControlPoints)
+{
+	std::vector<ShaderModule> localShaderModules;
+	std::vector<VkPipelineShaderStageCreateInfo> shaderStages;
+
+	shaderStages.resize(shaderFiles.size());
+	localShaderModules.resize(shaderFiles.size());
+
+	for (size_t i = 0 ; i < shaderFiles.size() ; i++)
+	{
+		const char* file = shaderFiles[i];
+
+		auto idx = shaderMap.find(file);
+
+		if (idx != shaderMap.end())
+		{
+			// printf("Already compiled file (%s)\n", file);
+			localShaderModules[i] = shaderModules[idx->second];
+		} else
+		{
+			// printf("Compiling new file (%s)\n", file);
+			VK_CHECK(createShaderModule(vkDev.device, &localShaderModules[i], file));
+			shaderModules.push_back(localShaderModules[i]);
+			shaderMap[std::string(file)] = (int)shaderModules.size() - 1;
+		}
+
+		VkShaderStageFlagBits stage = glslangShaderStageToVulkan(glslangShaderStageFromFileName(file));
+
+		shaderStages[i] = shaderStageInfo(stage, localShaderModules[i], "main");
+	}
+
+	const VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+	};
+
+	const VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+		/* The only difference from createGraphicsPipeline() */
+		.topology = topology,
+		.primitiveRestartEnable = VK_FALSE
+	};
+
+	const VkViewport viewport = {
+		.x = 0.0f,
+		.y = 0.0f,
+		.width = static_cast<float>(customWidth > 0 ? customWidth : vkDev.framebufferWidth),
+		.height = static_cast<float>(customHeight > 0 ? customHeight : vkDev.framebufferHeight),
+		.minDepth = 0.0f,
+		.maxDepth = 1.0f
+	};
+
+	const VkRect2D scissor = {
+		.offset = { 0, 0 },
+		.extent = { customWidth > 0 ? customWidth : vkDev.framebufferWidth, customHeight > 0 ? customHeight : vkDev.framebufferHeight }
+	};
+
+	const VkPipelineViewportStateCreateInfo viewportState = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+		.viewportCount = 1,
+		.pViewports = &viewport,
+		.scissorCount = 1,
+		.pScissors = &scissor
+	};
+
+	const VkPipelineRasterizationStateCreateInfo rasterizer = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+		.polygonMode = VK_POLYGON_MODE_FILL,
+		.cullMode = VK_CULL_MODE_NONE,
+		.frontFace = VK_FRONT_FACE_CLOCKWISE,
+		.lineWidth = 1.0f
+	};
+
+	const VkPipelineMultisampleStateCreateInfo multisampling = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+		.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+		.sampleShadingEnable = VK_FALSE,
+		.minSampleShading = 1.0f
+	};
+
+	const VkPipelineColorBlendAttachmentState colorBlendAttachment = {
+		.blendEnable = VK_TRUE,
+		.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA,
+		.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA,
+		.colorBlendOp = VK_BLEND_OP_ADD,
+		.srcAlphaBlendFactor = useBlending ? VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA : VK_BLEND_FACTOR_ONE,
+		.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+		.alphaBlendOp = VK_BLEND_OP_ADD,
+		.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+	};
+
+	const VkPipelineColorBlendStateCreateInfo colorBlending = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+		.logicOpEnable = VK_FALSE,
+		.logicOp = VK_LOGIC_OP_COPY,
+		.attachmentCount = 1,
+		.pAttachments = &colorBlendAttachment,
+		.blendConstants = { 0.0f, 0.0f, 0.0f, 0.0f }
+	};
+
+	const VkPipelineDepthStencilStateCreateInfo depthStencil = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO,
+		.depthTestEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE),
+		.depthWriteEnable = static_cast<VkBool32>(useDepth ? VK_TRUE : VK_FALSE),
+		.depthCompareOp = VK_COMPARE_OP_LESS,
+		.depthBoundsTestEnable = VK_FALSE,
+		.minDepthBounds = 0.0f,
+		.maxDepthBounds = 1.0f
+	};
+
+	VkDynamicState dynamicStateElt = VK_DYNAMIC_STATE_SCISSOR;
+
+	const VkPipelineDynamicStateCreateInfo dynamicState = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.dynamicStateCount = 1,
+		.pDynamicStates = &dynamicStateElt
+	};
+
+	const VkPipelineTessellationStateCreateInfo tessellationState = {
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO,
+		.pNext = nullptr,
+		.flags = 0,
+		.patchControlPoints = numPatchControlPoints
+	};
+
+	const VkGraphicsPipelineCreateInfo pipelineInfo = {
+		.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		.stageCount = static_cast<uint32_t>(shaderStages.size()),
+		.pStages = shaderStages.data(),
+		.pVertexInputState = &vertexInputInfo,
+		.pInputAssemblyState = &inputAssembly,
+		.pTessellationState = (topology == VK_PRIMITIVE_TOPOLOGY_PATCH_LIST) ? &tessellationState : nullptr,
+		.pViewportState = &viewportState,
+		.pRasterizationState = &rasterizer,
+		.pMultisampleState = &multisampling,
+		.pDepthStencilState = useDepth ? &depthStencil : nullptr,
+		.pColorBlendState = &colorBlending,
+		.pDynamicState = dynamicScissorState ? &dynamicState : nullptr,
+		.layout = pipelineLayout,
+		.renderPass = renderPass,
+		.subpass = 0,
+		.basePipelineHandle = VK_NULL_HANDLE,
+		.basePipelineIndex = -1
+	};
+
+	VK_CHECK(vkCreateGraphicsPipelines(vkDev.device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, pipeline));
+
+	return true;
+}
+
 VkPipeline VulkanResources::addPipeline(VkRenderPass renderPass, VkPipelineLayout pipelineLayout,
 	const std::vector<const char*>& shaderFiles,
 	const PipelineInfo& ppInfo)
 {
 	VkPipeline pipeline;
 
-	if (!createGraphicsPipeline(vkDev, renderPass, pipelineLayout, shaderFiles,
+	if (!this->createGraphicsPipeline(vkDev, renderPass, pipelineLayout, shaderFiles,
 		&pipeline, ppInfo.topology, ppInfo.useDepth, ppInfo.useBlending, ppInfo.dynamicScissorState, ppInfo.width, ppInfo.height, ppInfo.patchControlPoints))
 	{
 		printf("Cannot create graphics pipeline\n");
@@ -653,26 +881,26 @@ std::pair<BufferAttachment, BufferAttachment> VulkanResources::loadMeshToBuffer(
 	return makeMeshBuffers(vertices, indices);
 }
 
-std::pair<BufferAttachment, BufferAttachment> VulkanResources::createPlaneBuffer_XZ()
+std::pair<BufferAttachment, BufferAttachment> VulkanResources::createPlaneBuffer_XZ(float sx, float sz)
 {
 	return makeMeshBuffers(
 		std::vector<float> {
-			-1, 0, -1,   0, 0,  0, 1, 0,
-			+1, 0, -1,   1, 0,  0, 1, 0,
-			+1, 0, +1,   1, 1,  0, 1, 0,
-			-1, 0, +1,   0, 1,  0, 1, 0
+			-sx, 0, -sz,   0, 0,  0, 1, 0,
+			+sx, 0, -sz,   1, 0,  0, 1, 0,
+			+sx, 0, +sz,   1, 1,  0, 1, 0,
+			-sx, 0, +sz,   0, 1,  0, 1, 0
 		},
 		std::vector<unsigned int> { 0u, 1u, 2u, 0u, 3u, 2u });
 }
 
-std::pair<BufferAttachment, BufferAttachment> VulkanResources::createPlaneBuffer_XY()
+std::pair<BufferAttachment, BufferAttachment> VulkanResources::createPlaneBuffer_XY(float sx, float sy)
 {
 	return makeMeshBuffers(
 		std::vector<float> {
-			-1, -1, 0, 0, 0, 0, 0, 1,
-			+1, -1, 0, 1, 0, 0, 0, 1,
-			+1, +1, 0, 1, 1, 0, 0, 1,
-			-1, +1, 0, 0, 1, 0, 0, 1
+			-sx, -sy, 0, 0, 0, 0, 0, 1,
+			+sx, -sy, 0, 1, 0, 0, 0, 1,
+			+sx, +sy, 0, 1, 1, 0, 0, 1,
+			-sx, +sy, 0, 0, 1, 0, 0, 1
 		},
 		std::vector<unsigned int> { 0u, 1u, 2u, 0u, 3u, 2u });
 }

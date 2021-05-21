@@ -48,6 +48,6 @@ private:
 	static constexpr unsigned kMaxLinesDataSize = kMaxLinesCount * sizeof(LineCanvas::VertexData) * 2;
 };
 
-void drawBox3d(LineCanvas& canvas, const glm::mat4& m, const glm::vec3& size);
+void drawBox3d(LineCanvas& canvas, const glm::mat4& m, const BoundingBox& box, const glm::vec4& color);
 
 void renderCameraFrustum(LineCanvas& canvas, const mat4& camView, const mat4& camProj, const vec4& camColor);

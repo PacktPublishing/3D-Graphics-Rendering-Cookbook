@@ -13,13 +13,12 @@ struct CubemapRenderer: public Renderer
 
 	void updateBuffers(size_t currentImage) override;
 
-	inline void setMatrices(const glm::mat4& proj, const glm::mat4& view, const glm::mat4& model) { ubo.proj_ = proj; ubo.view_ = view; ubo.model_ = model; }
+	inline void setMatrices(const glm::mat4& proj, const glm::mat4& view) { ubo.proj_ = proj; ubo.view_ = view; }
 
 private:
 	struct UniformBuffer
 	{
 		glm::mat4 proj_;
 		glm::mat4 view_;
-		glm::mat4 model_;
 	} ubo;
 };

@@ -68,7 +68,7 @@ bool PBRModelRenderer::createDescriptorSet(VulkanRenderDevice& vkDev, uint32_t u
 		const VkDescriptorImageInfo  imageInfoNormal   = { texNormal_.sampler, texNormal_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		const VkDescriptorImageInfo  imageInfoEnv      = { envMap_.sampler, envMap_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
-		const VkDescriptorImageInfo  imageInfoEnvIrr   = { envMapIrradience_.sampler, envMapIrradience_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+		const VkDescriptorImageInfo  imageInfoEnvIrr   = { envMapIrradiance_.sampler, envMapIrradiance_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 		const VkDescriptorImageInfo  imageInfoBRDF     = { brdfLUT_.sampler, brdfLUT_.image.imageView, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
 
 		const std::array<VkWriteDescriptorSet, 11> descriptorWrites = {
@@ -152,7 +152,7 @@ PBRModelRenderer::PBRModelRenderer(VulkanRenderDevice& vkDev,
 
 	// cube maps
 	loadCubeMap(vkDev, texEnvMapFile, envMap_);
-	loadCubeMap(vkDev, texIrrMapFile, envMapIrradience_);
+	loadCubeMap(vkDev, texIrrMapFile, envMapIrradiance_);
 
 	gli::texture gliTex = gli::load_ktx("data/brdfLUT.ktx");
 	glm::tvec3<GLsizei> extent(gliTex.extent(0));
@@ -194,7 +194,7 @@ PBRModelRenderer::~PBRModelRenderer()
 	destroyVulkanTexture(device_, texNormal_);
 
 	destroyVulkanTexture(device_,  envMap_);
-	destroyVulkanTexture(device_,  envMapIrradience_);
+	destroyVulkanTexture(device_,  envMapIrradiance_);
 
 	destroyVulkanTexture(device_,  brdfLUT_);
 }

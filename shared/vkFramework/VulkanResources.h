@@ -4,6 +4,7 @@
 
 #include <cstring>
 #include <memory>
+#include <map>
 #include <utility>
 
 /**
@@ -39,6 +40,14 @@ struct TextureArrayAttachment
 	DescriptorInfo dInfo;
 
 	std::vector<VulkanTexture> textures;
+};
+
+struct TextureCreationParams
+{
+	VkFilter minFilter;
+	VkFilter maxFilter;
+
+///	VkAccessModeFlags accessMode;
 };
 
 inline TextureAttachment makeTextureAttachment(VulkanTexture tex, VkShaderStageFlags shaderStageFlags) {
@@ -147,9 +156,13 @@ struct VulkanResources
 
 	VulkanTexture createFontTexture(const char* fontFile);
 
-	VulkanTexture addColorTexture(int texWidth = 0, int texHeight = 0, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM, VkFilter minFilter = VK_FILTER_LINEAR, VkFilter maxFilter = VK_FILTER_LINEAR);
+	VulkanTexture addColorTexture(int texWidth = 0, int texHeight = 0, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM, VkFilter minFilter = VK_FILTER_LINEAR, VkFilter maxFilter = VK_FILTER_LINEAR, VkSamplerAddressMode addressMode = VK_SAMPLER_ADDRESS_MODE_REPEAT);
 
 	VulkanTexture addDepthTexture(int texWidth = 0, int texHeight = 0, VkImageLayout layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
+	VulkanTexture addSolidRGBATexture(uint32_t color = 0xFFFFFFFF);
+
+	VulkanTexture addRGBATexture(int texWidth, int texHeight, void* data);
 
 	VulkanBuffer addBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, bool createMapping = false);
 
@@ -217,8 +230,8 @@ struct VulkanResources
 		std::vector<float>& vertices,
 		std::vector<unsigned int>& indices);
 
-	std::pair<BufferAttachment, BufferAttachment> createPlaneBuffer_XZ();
-	std::pair<BufferAttachment, BufferAttachment> createPlaneBuffer_XY();
+	std::pair<BufferAttachment, BufferAttachment> createPlaneBuffer_XZ(float sx, float sz);
+	std::pair<BufferAttachment, BufferAttachment> createPlaneBuffer_XY(float sx, float sy);
 
 private:
 	VulkanRenderDevice& vkDev;
@@ -234,6 +247,22 @@ private:
 
 	std::vector<VkDescriptorSetLayout> allDSLayouts;
 	std::vector<VkDescriptorPool>      allDPools;
+
+	std::vector<ShaderModule> shaderModules;
+	std::map<std::string, int> shaderMap;
+
+	bool createGraphicsPipeline(
+		VulkanRenderDevice& vkDev,
+		VkRenderPass renderPass, VkPipelineLayout pipelineLayout,
+		const std::vector<const char*>& shaderFiles,
+		VkPipeline* pipeline,
+		VkPrimitiveTopology topology,
+		bool useDepth,
+		bool useBlending,
+		bool dynamicScissorState,
+		int32_t customWidth,
+		int32_t customHeight,
+		uint32_t numPatchControlPoints);
 };
 
 /* A helper function for inplace allocation of VulkanBuffers. Helpful to avoid multiline buffer initialization in constructors */

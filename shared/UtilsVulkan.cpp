@@ -131,7 +131,7 @@ VkShaderStageFlagBits glslangShaderStageToVulkan(glslang_stage_t sh)
 	return VK_SHADER_STAGE_VERTEX_BIT;
 }
 
-static glslang_stage_t glslangShaderStageFromFileName(const char* fileName)
+glslang_stage_t glslangShaderStageFromFileName(const char* fileName)
 {
 	if (endsWith(fileName, ".vert"))
 		return GLSLANG_STAGE_VERTEX;
@@ -259,7 +259,7 @@ void createInstance(VkInstance* instance)
 	const std::vector<const char*> exts =
 	{
 		"VK_KHR_surface",
-#if defined (WIN32)
+#if defined (_WIN32)
 		"VK_KHR_win32_surface"
 #endif
 #if defined (__APPLE__)
@@ -900,7 +900,7 @@ void destroyVulkanInstance(VulkanInstance& vk)
 	vkDestroyInstance(vk.instance, nullptr);
 }
 
-bool createTextureSampler(VkDevice device, VkSampler* sampler, VkFilter minFilter, VkFilter maxFilter)
+bool createTextureSampler(VkDevice device, VkSampler* sampler, VkFilter minFilter, VkFilter maxFilter, VkSamplerAddressMode addressMode)
 {
 	const VkSamplerCreateInfo samplerInfo = {
 		.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
@@ -909,9 +909,9 @@ bool createTextureSampler(VkDevice device, VkSampler* sampler, VkFilter minFilte
 		.magFilter = VK_FILTER_LINEAR,
 		.minFilter = VK_FILTER_LINEAR,
 		.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR,
-		.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT,
-		.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeU = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeV = addressMode, // VK_SAMPLER_ADDRESS_MODE_REPEAT,
+		.addressModeW = addressMode, // VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE VK_SAMPLER_ADDRESS_MODE_REPEAT,
 		.mipLodBias = 0.0f,
 		.anisotropyEnable = VK_FALSE,
 		.maxAnisotropy = 1,
@@ -1716,6 +1716,13 @@ void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat fo
 {
 	VkCommandBuffer commandBuffer = beginSingleTimeCommands(vkDev);
 
+	transitionImageLayoutCmd(commandBuffer, image, format, oldLayout, newLayout, layerCount, mipLevels);
+
+	endSingleTimeCommands(vkDev, commandBuffer);
+}
+
+void transitionImageLayoutCmd(VkCommandBuffer commandBuffer, VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, uint32_t layerCount, uint32_t mipLevels)
+{
 	VkImageMemoryBarrier barrier = {
 		.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
 		.pNext = nullptr,
@@ -1802,6 +1809,53 @@ void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat fo
 		destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
 	}
 
+	/* Wait for render pass to complete */
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		barrier.srcAccessMask = 0; // VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = 0;
+/*
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+///		destinationStage = VK_PIPELINE_STAGE_ALL_GRAPHICS_BIT;
+		destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+*/
+		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+
+	/* Convert back from read-only to color attachment */
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL) {
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	}
+	/* Convert from updateable texture to shader read-only */
+	else if (oldLayout == VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+
+	/* Convert back from read-only to depth attachment */
+	else if (oldLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
+		barrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+		destinationStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+	}
+	/* Convert from updateable depth texture to shader read-only */
+	else if (oldLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
+		barrier.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+
+		sourceStage = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+		destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+	}
+
 	vkCmdPipelineBarrier(
 		commandBuffer,
 		sourceStage, destinationStage,
@@ -1810,8 +1864,6 @@ void transitionImageLayout(VulkanRenderDevice& vkDev, VkImage image, VkFormat fo
 		0, nullptr,
 		1, &barrier
 	);
-
-	endSingleTimeCommands(vkDev, commandBuffer);
 }
 
 bool createDepthOnlyFramebuffer(VulkanRenderDevice& vkDev,
@@ -2737,4 +2789,38 @@ RenderPass::RenderPass(VulkanRenderDevice& vkDev, bool useDepth, const RenderPas
 		printf("Failed to create render pass\n");
 		exit(EXIT_FAILURE);
 	}
+}
+
+bool setVkObjectName(VulkanRenderDevice& vkDev, void* object, VkObjectType objType, const char* name)
+{
+	VkDebugUtilsObjectNameInfoEXT nameInfo = {
+		.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT,
+		.pNext = nullptr,
+		.objectType = objType,
+		.objectHandle = (uint64_t)object,
+		.pObjectName = name
+	};
+
+	return (vkSetDebugUtilsObjectNameEXT(vkDev.device, &nameInfo) == VK_SUCCESS);
+}
+
+void updateTextureInDescriptorSetArray(VulkanRenderDevice& vkDev, VkDescriptorSet ds, VulkanTexture t, uint32_t textureIndex, uint32_t bindingIdx)
+{
+	const VkDescriptorImageInfo imageInfo = {
+		.sampler = t.sampler,
+		.imageView = t.image.imageView,
+		.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
+	};
+
+	VkWriteDescriptorSet writeSet = {
+		.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+		.dstSet = ds,
+		.dstBinding = bindingIdx,
+		.dstArrayElement = textureIndex,
+		.descriptorCount = 1,
+		.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		.pImageInfo = &imageInfo
+	};
+
+	vkUpdateDescriptorSets(vkDev.device, 1, &writeSet, 0, nullptr);
 }

@@ -16,14 +16,11 @@ public:
 
 	std::vector<GLTexture> allMaterialTextures_;
 
-	std::vector<uint32_t> indexData_;
-	std::vector<float> vertexData_;
 	MeshFileHeader header_;
+	MeshData meshData_;
 
 	Scene scene_;
 	std::vector<MaterialDescription> materials_;
-	std::vector<Mesh> meshes_;
-
 	std::vector<DrawData> shapes_;
 
 	void loadScene(const char* sceneFile);

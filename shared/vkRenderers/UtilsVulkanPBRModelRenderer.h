@@ -37,7 +37,7 @@ private:
 	VulkanTexture texMeR_;
 	VulkanTexture texNormal_;
 
-	VulkanTexture envMapIrradience_;
+	VulkanTexture envMapIrradiance_;
 	VulkanTexture envMap_;
 
 	VulkanTexture brdfLUT_;

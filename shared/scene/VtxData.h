@@ -2,14 +2,15 @@
 
 #include <stdint.h>
 
-#include <vector>
+#include <glm/glm.hpp>
+
+#include "shared/Utils.h"
+#include "shared/UtilsMath.h"
 
 constexpr const uint32_t kMaxLODs = 8;
 constexpr const uint32_t kMaxStreams = 8;
 
-/*
-   All offsets are relative to the beginning of the data block (excluding headers with Mesh list)
-*/
+// All offsets are relative to the beginning of the data block (excluding headers with Mesh list)
 struct Mesh final
 {
 	/* Number of LODs in this mesh. Strictly less than MAX_LODS, last LOD offset is used as a marker only */
@@ -73,19 +74,21 @@ struct DrawData
 	uint32_t transformIndex;
 };
 
-struct BoundingBox
+struct MeshData
 {
-	float min[3];
-	float max[3];
+	std::vector<uint32_t> indexData_;
+	std::vector<float> vertexData_;
+	std::vector<Mesh> meshes_;
+	std::vector<BoundingBox> boxes_;
 };
 
 static_assert(sizeof(DrawData) == sizeof(uint32_t) * 6);
 static_assert(sizeof(BoundingBox) == sizeof(float) * 6);
 
-MeshFileHeader loadMeshData(const char* meshFile, std::vector<Mesh>& meshes, std::vector<uint32_t>& indexData, std::vector<float>& vertexData);
+MeshFileHeader loadMeshData(const char* meshFile, MeshData& out);
+void saveMeshData(const char* fileName, const MeshData& m);
 
-void saveBoundingBoxes(const char* fileName, const std::vector<BoundingBox>& boxes);
-void loadBoundingBoxes(const char* fileName, std::vector<BoundingBox>& boxes);
+void recalculateBoundingBoxes(MeshData& m);
 
-// Calculate an axis-aligned bounding box around a set of vertices (by default we process Pos + Normal + TexCoords, 8 items total)
-BoundingBox calculateBoundingBox(const float* vertices, uint32_t vertexCount, uint32_t numElementsPerVertex = 8);
+// Combine a list of meshes to a single mesh container
+MeshFileHeader mergeMeshData(MeshData& m, const std::vector<MeshData*> md);

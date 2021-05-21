@@ -32,7 +32,9 @@ public:
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
-		window_ = glfwCreateWindow(1024, 768, "Simple example", nullptr, nullptr);
+		const GLFWvidmode* info = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
+		window_ = glfwCreateWindow(info->width, info->height, "Simple example", nullptr, nullptr);
 
 		if (!window_)
 		{
@@ -40,10 +42,9 @@ public:
 			exit(EXIT_FAILURE);
 		}
 
-		glfwMaximizeWindow(window_);
 		glfwMakeContextCurrent(window_);
 		gladLoadGL(glfwGetProcAddress);
-		glfwSwapInterval(1);
+		glfwSwapInterval(0);
 
 		initDebug();
 	}
@@ -53,13 +54,20 @@ public:
 		glfwTerminate();
 	}
 	GLFWwindow* getWindow() const { return window_; }
+	float getDeltaSeconds() const { return deltaSeconds_; }
 	void swapBuffers()
 	{
 		glfwSwapBuffers(window_);
 		glfwPollEvents();
 		assert(glGetError() == GL_NO_ERROR);
+
+		const double newTimeStamp = glfwGetTime();
+		deltaSeconds_ = static_cast<float>(newTimeStamp - timeStamp_);
+		timeStamp_ = newTimeStamp;
 	}
 
 private:
 	GLFWwindow* window_ = nullptr;
+	double timeStamp_ = glfwGetTime();
+	float deltaSeconds_ = 0;
 };
