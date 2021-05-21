@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import os
 import sys
@@ -17,7 +17,7 @@ def runPythonScript(Script, Params):
 		print( "Unable to run " + Script )
 		exit(255)
 
-if executeCommandSilent("python --version") != 0:
+if executeCommandSilent(Python + " --version") != 0:
 	print( "Make sure Python can be started from the command line (add path to `python.exe` to PATH on Windows)" )
 	exit(255)
 
