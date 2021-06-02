@@ -1,4 +1,5 @@
 #include "shared/vkRenderers/UtilsVulkanRendererBase.h"
+#include <stdio.h>
 
 RendererBase::~RendererBase()
 {
