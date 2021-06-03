@@ -2,6 +2,8 @@
 
 #include "shared/vkRenderers/UtilsVulkanRendererBase.h"
 
+#include <string>
+#include <stdio.h>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 using glm::mat4;
