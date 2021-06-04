@@ -5,6 +5,10 @@ Published by Packt
 
 ===========================
 
+![image](https://user-images.githubusercontent.com/2510143/120815793-d538de80-c558-11eb-9a0b-149b1212a442.png)
+
+===========================
+
 Windows build instructions:
 ---------------------------
 
