@@ -16,6 +16,11 @@ macro(SET_OUTPUT_NAMES projname)
 	set_target_properties(${projname} PROPERTIES OUTPUT_NAME_DEBUG ${projname}_Debug)
 	set_target_properties(${projname} PROPERTIES OUTPUT_NAME_RELEASE ${projname}_Release)
 	set_target_properties(${projname} PROPERTIES OUTPUT_NAME_RELWITHDEBINFO ${projname}_ReleaseDebInfo)
+
+	# On Linux/macOS the binaries go to <root>/bin folder
+	if (UNIX)
+		set_target_properties(${projname} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin")
+	endif()
 endmacro()
 
 macro(SETUP_APP projname chapter)
