@@ -8,7 +8,6 @@ include_directories(../../deps/src/easy_profiler/include)
 
 add_definitions(-DBUILD_WITH_EASY_PROFILER=1)
 
-SETUP_APP(Ch2_Sample05_EasyProfiler "Chapter 2")
+SETUP_APP(Ch2_Sample05_EasyProfiler "Chapter 02")
 
 target_link_libraries(Ch2_Sample05_EasyProfiler glad glfw easy_profiler)
-

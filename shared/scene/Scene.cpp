@@ -313,9 +313,9 @@ void mergeScenes(Scene& scene, const std::vector<Scene*>& scenes, const std::vec
 	if (scenes.empty())
 		return;
 
-	int ofs = 1;
-	int meshOfs = 0;
-	int nameOfs = (int)scene.names_.size();
+	int offs = 1;
+	int meshOffs = 0;
+	int nameOffs = (int)scene.names_.size();
 	int materialOfs = 0;
 	auto meshCount = meshCounts.begin();
 
@@ -323,7 +323,7 @@ void mergeScenes(Scene& scene, const std::vector<Scene*>& scenes, const std::vec
 		scene.materialNames_ = scenes[0]->materialNames_;
 
 	// FIXME: too much logic (for all the components in a scene, though mesh data and materials go separately - there are dedicated data lists)
-	for (const auto& s: scenes)
+	for (const Scene* s: scenes)
 	{
 		mergeVectors(scene.localTransform_, s->localTransform_);
 		mergeVectors(scene.globalTransform_, s->globalTransform_);
@@ -336,42 +336,42 @@ void mergeScenes(Scene& scene, const std::vector<Scene*>& scenes, const std::vec
 
 		int nodeCount = (int)s->hierarchy_.size();
 
-		shiftNodes(scene, ofs, nodeCount, ofs);
+		shiftNodes(scene, offs, nodeCount, offs);
 
-		mergeMaps(scene.meshes_,          s->meshes_,          ofs, mergeMeshes ? meshOfs : 0);
-		mergeMaps(scene.materialForNode_, s->materialForNode_, ofs, mergeMaterials ? materialOfs : 0);
-		mergeMaps(scene.nameForNode_,     s->nameForNode_,     ofs, nameOfs);
+		mergeMaps(scene.meshes_,          s->meshes_,          offs, mergeMeshes ? meshOffs : 0);
+		mergeMaps(scene.materialForNode_, s->materialForNode_, offs, mergeMaterials ? materialOfs : 0);
+		mergeMaps(scene.nameForNode_,     s->nameForNode_,     offs, nameOffs);
 
-		ofs += nodeCount;
+		offs += nodeCount;
 
 		materialOfs += (int)s->materialNames_.size();
-		nameOfs += (int)s->names_.size();
+		nameOffs += (int)s->names_.size();
 
 		if (mergeMeshes)
 		{
-			meshOfs += *meshCount;
+			meshOffs += *meshCount;
 			meshCount++;
 		}
 	}
 
 	// fixing 'nextSibling' fields in the old roots (zero-index in all the scenes)
-	ofs = 1;
+	offs = 1;
 	int idx = 0;
-	for (const auto& s: scenes)
+	for (const Scene* s: scenes)
 	{
 		int nodeCount = (int)s->hierarchy_.size();
 		bool isLast = (idx == scenes.size() - 1);
 		// calculate new next sibling for the old scene roots
-		int next = isLast ? -1 : ofs + nodeCount;
-		scene.hierarchy_[ofs].nextSibling_ = next;
+		int next = isLast ? -1 : offs + nodeCount;
+		scene.hierarchy_[offs].nextSibling_ = next;
 		// attach to new root
-		scene.hierarchy_[ofs].parent_ = 0;
+		scene.hierarchy_[offs].parent_ = 0;
 
 		// transform old root nodes, if the transforms are given
 		if (!rootTransforms.empty())
-			scene.localTransform_[ofs] = rootTransforms[idx] * scene.localTransform_[ofs];
+			scene.localTransform_[offs] = rootTransforms[idx] * scene.localTransform_[offs];
 
-		ofs += nodeCount;
+		offs += nodeCount;
 		idx++;
 	}
 
@@ -458,8 +458,8 @@ void deleteSceneNodes(Scene& scene, const std::vector<uint32_t>& nodesToDelete)
 {
 	// 0) Add all the nodes down below in the hierarchy
 	auto indicesToDelete = nodesToDelete;
-	for (auto n: indicesToDelete)
-		collectNodesToDelete(scene, n, indicesToDelete);
+	for (auto i: indicesToDelete)
+		collectNodesToDelete(scene, i, indicesToDelete);
 
 	// aux array with node indices to keep track of the moved ones [moved = [](node) { return (node != nodes[node]); ]
 	std::vector<int> nodes(scene.hierarchy_.size());

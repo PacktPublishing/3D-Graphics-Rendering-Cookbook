@@ -10,7 +10,7 @@ include_directories(../../deps/src/imgui)
 
 include_directories(../../shared)
 
-SETUP_APP(Ch8_SampleVK03_HDR "Chapter 8")
+SETUP_APP(Ch8_SampleVK03_HDR "Chapter 08")
 
 target_link_libraries(Ch8_SampleVK03_HDR PRIVATE SharedUtils)
 

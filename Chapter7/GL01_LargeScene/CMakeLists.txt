@@ -8,6 +8,6 @@ include_directories(../../deps/src/vulkan/include)
 include_directories(../../deps/src/imgui)
 include_directories(../../shared)
 
-SETUP_APP(Ch7_SampleGL01_LargeScene "Chapter 7")
+SETUP_APP(Ch7_SampleGL01_LargeScene "Chapter 07")
 
 target_link_libraries(Ch7_SampleGL01_LargeScene PRIVATE SharedUtils)

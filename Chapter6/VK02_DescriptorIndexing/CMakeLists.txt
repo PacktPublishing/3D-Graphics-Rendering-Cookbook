@@ -7,7 +7,7 @@ include(../../CMake/CommonMacros.txt)
 include_directories(../../deps/src/vulkan/include)
 include_directories(../../shared)
 
-SETUP_APP(Ch6_SampleVK02_DescriptorIndexing "Chapter 6")
+SETUP_APP(Ch6_SampleVK02_DescriptorIndexing "Chapter 06")
 
 target_link_libraries(Ch6_SampleVK02_DescriptorIndexing PRIVATE SharedUtils)
 

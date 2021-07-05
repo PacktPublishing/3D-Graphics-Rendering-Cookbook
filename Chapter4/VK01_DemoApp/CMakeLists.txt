@@ -8,7 +8,7 @@ include_directories(../../deps/src/imgui)
 include_directories(../../deps/src/vulkan/include)
 include_directories(../../shared)
 
-SETUP_APP(Ch4_SampleVK01_DemoApp "Chapter 4")
+SETUP_APP(Ch4_SampleVK01_DemoApp "Chapter 04")
 
 target_link_libraries(Ch4_SampleVK01_DemoApp PRIVATE SharedUtils)
 

@@ -11,6 +11,6 @@ include_directories(../../deps/src/ImGuizmo)
 
 include_directories(../../shared)
 
-SETUP_APP(Ch7_SampleVK01_SceneGraph "Chapter 7")
+SETUP_APP(Ch7_SampleVK01_SceneGraph "Chapter 07")
 
 target_link_libraries(Ch7_SampleVK01_SceneGraph PRIVATE SharedUtils ImGuizmo)

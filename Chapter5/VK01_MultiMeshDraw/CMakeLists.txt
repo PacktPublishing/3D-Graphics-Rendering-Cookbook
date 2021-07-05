@@ -8,7 +8,7 @@ include_directories(../../deps/src/imgui)
 include_directories(../../deps/src/vulkan/include)
 include_directories(../../shared)
 
-SETUP_APP(Ch5_SampleVK01_MultiMeshDraw "Chapter 5")
+SETUP_APP(Ch5_SampleVK01_MultiMeshDraw "Chapter 05")
 
 target_link_libraries(Ch5_SampleVK01_MultiMeshDraw PRIVATE SharedUtils)
 

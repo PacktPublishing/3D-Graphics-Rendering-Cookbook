@@ -8,7 +8,7 @@ include_directories(../../deps/src/imgui)
 include_directories(../../deps/src/vulkan/include)
 include_directories(../../shared)
 
-SETUP_APP(Ch7_Tool01_SceneConverter "Chapter 7")
+SETUP_APP(Ch7_Tool01_SceneConverter "Chapter 07")
 
 target_link_libraries(Ch7_Tool01_SceneConverter PRIVATE SharedUtils meshoptimizer)
 

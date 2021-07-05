@@ -10,7 +10,7 @@ include_directories(../../deps/src/imgui)
 
 include_directories(../../shared)
 
-SETUP_APP(Ch6_SampleVK04_ComputeMesh "Chapter 6")
+SETUP_APP(Ch6_SampleVK04_ComputeMesh "Chapter 06")
 
 target_link_libraries(Ch6_SampleVK04_ComputeMesh PRIVATE SharedUtils)
 

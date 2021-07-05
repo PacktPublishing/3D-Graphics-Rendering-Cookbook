@@ -4,4 +4,4 @@ project(Chapter1)
 
 include(../../CMake/CommonMacros.txt)
 
-SETUP_APP(Ch1_Sample2_CMake "Chapter 1")
+SETUP_APP(Ch1_Sample2_CMake "Chapter 01")

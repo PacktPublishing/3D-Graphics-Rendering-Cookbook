@@ -8,6 +8,6 @@ include_directories(../../deps/src/vulkan/include)
 include_directories(../../deps/src/imgui)
 include_directories(../../shared)
 
-SETUP_APP(Ch8_SampleGL01_ShadowMapping "Chapter 8")
+SETUP_APP(Ch8_SampleGL01_ShadowMapping "Chapter 08")
 
 target_link_libraries(Ch8_SampleGL01_ShadowMapping PRIVATE SharedUtils)

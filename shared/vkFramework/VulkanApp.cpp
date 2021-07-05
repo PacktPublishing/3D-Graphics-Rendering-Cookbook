@@ -15,8 +15,8 @@ Resolution detectResolution(int width, int height)
 
 	const GLFWvidmode* info = glfwGetVideoMode(monitor);
 
-	const uint32_t windowW = width  > 0 ? width : (int)((float)(info->width * (-width)) / 100.0f);
-	const uint32_t windowH = height > 0 ? height : (int)((float)(info->height * (-height)) / 100.0f);
+	const uint32_t windowW = width  > 0 ? width : (uint32_t)(info->width * width / -100);
+	const uint32_t windowH = height > 0 ? height : (uint32_t)(info->height * height / -100);
 
 	return Resolution{ .width = windowW, .height = windowH };
 }

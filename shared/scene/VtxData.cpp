@@ -110,8 +110,8 @@ MeshFileHeader mergeMeshData(MeshData& m, const std::vector<MeshData*> md)
 	uint32_t totalVertexDataSize = 0;
 	uint32_t totalIndexDataSize  = 0;
 
-	uint32_t ofs = 0;
-	for (const auto& i: md)
+	uint32_t offs = 0;
+	for (const MeshData* i: md)
 	{
 		mergeVectors(m.indexData_, i->indexData_);
 		mergeVectors(m.vertexData_, i->vertexData_);
@@ -123,13 +123,13 @@ MeshFileHeader mergeMeshData(MeshData& m, const std::vector<MeshData*> md)
 		for (size_t j = 0 ; j < (uint32_t)i->meshes_.size() ; j++)
 			// m.vertexCount, m.lodCount and m.streamCount do not change
 			// m.vertexOffset also does not change, because vertex offsets are local (i.e., baked into the indices)
-			m.meshes_[ofs + j].indexOffset += totalIndexDataSize;
+			m.meshes_[offs + j].indexOffset += totalIndexDataSize;
 
 		// shift individual indices
 		for(size_t j = 0 ; j < i->indexData_.size() ; j++)
 			m.indexData_[totalIndexDataSize + j] += vtxOffset;
 
-		ofs += (uint32_t)i->meshes_.size();
+		offs += (uint32_t)i->meshes_.size();
 
 		totalIndexDataSize += (uint32_t)i->indexData_.size();
 		totalVertexDataSize += (uint32_t)i->vertexData_.size();
@@ -137,8 +137,8 @@ MeshFileHeader mergeMeshData(MeshData& m, const std::vector<MeshData*> md)
 
 	return MeshFileHeader {
 		.magicValue = 0x12345678,
-		.meshCount = (uint32_t)ofs,
-		.dataBlockStartOffset = (uint32_t )(sizeof(MeshFileHeader) + ofs * sizeof(Mesh)),
+		.meshCount = (uint32_t)offs,
+		.dataBlockStartOffset = (uint32_t )(sizeof(MeshFileHeader) + offs * sizeof(Mesh)),
 		.indexDataSize = static_cast<uint32_t>(totalIndexDataSize * sizeof(uint32_t)),
 		.vertexDataSize = static_cast<uint32_t>(totalVertexDataSize * sizeof(float))
 	};

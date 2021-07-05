@@ -75,8 +75,8 @@ void mergeMaterialLists(
 
 	// Create combined material list [no hashing of materials, just straightforward merging of all lists]
 	int midx = 0;
-	for (const auto& ml: oldMaterials) {
-		for (const auto& m: *ml) {
+	for (const std::vector<MaterialDescription>* ml: oldMaterials) {
+		for (const MaterialDescription& m: *ml) {
 			allMaterials.push_back(m);
 			materialToTextureList[allMaterials.size() - 1] = midx;
 		}
@@ -85,7 +85,7 @@ void mergeMaterialLists(
 	}
 
 	// Create one combined texture list
-	for (const auto& tl: oldTextures)
+	for (const std::vector<std::string>* tl: oldTextures)
 		for (const std::string& file: *tl) {
 			newTextureNames[file] = addUnique(newTextures, file); // addUnique() is in SceneConverter/MaterialConv.inl
 		}

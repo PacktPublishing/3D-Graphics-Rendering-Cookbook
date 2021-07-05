@@ -6,8 +6,8 @@
 static uint32_t shiftMeshIndices(MeshData& meshData, const std::vector<uint32_t>& meshesToMerge)
 {
 	auto minVtxOffset = std::numeric_limits<uint32_t>::max();
-	for (auto m: meshesToMerge)
-		minVtxOffset = std::min(meshData.meshes_[m].vertexOffset, minVtxOffset);
+	for (auto i: meshesToMerge)
+		minVtxOffset = std::min(meshData.meshes_[i].vertexOffset, minVtxOffset);
 
 	auto mergeCount = 0u; // calculated by summing index counts in meshesToMerge
 
