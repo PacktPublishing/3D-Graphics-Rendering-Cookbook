@@ -356,7 +356,6 @@ int main(void)
 			*numVisibleMeshesPtr = 0;
 			programCulling.useProgram();
 			glMemoryBarrier(GL_BUFFER_UPDATE_BARRIER_BIT);
-			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, kBufferIndex_BoundingBoxes, boundingBoxesBuffer.getHandle());
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, kBufferIndex_NumVisibleMeshes, numVisibleMeshesBuffer.getHandle());
 
