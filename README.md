@@ -1,7 +1,13 @@
-# 3D Graphics with Vulkan and OpenGL
-A One-stop guide to learning 3D graphics rendering algorithms in modern OpenGL and Vulkan.
+# 3D Graphics Rendering Cookbook
+A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan.
+
+by Sergey Kosarevsky & Viktor Latypov
 
 Published by Packt
+
+https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197
+
+![image](https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png)
 
 ===========================
 
