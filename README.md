@@ -15,6 +15,11 @@ https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1
 
 ===========================
 
+Downloading assets and dependencies:
+------------------------------------
+
+Run the `bootstrap.py` script from the root filder.
+
 Windows build instructions:
 ---------------------------
 
