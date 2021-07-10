@@ -150,7 +150,6 @@ struct MyApp: public CameraApp
 
 	void drawUI() override {
 		ImGui::Begin("Settings", nullptr);
-		ImGui::Text("FPS: %.2f", getFPS());
 		ImGui::SliderFloat("Percentage", &g_Percentage, 0.0f, 1.0f);
 		ImGui::End();
 	}

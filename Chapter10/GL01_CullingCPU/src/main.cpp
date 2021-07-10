@@ -128,7 +128,7 @@ int main(void)
 		sceneData.meshData_.boxes_[c.meshIndex].transform(model);
 	}
 
-	const BoundingBox allScene = combineBoxes(sceneData.meshData_.boxes_);
+	const BoundingBox fullScene = combineBoxes(sceneData.meshData_.boxes_);
 
 	while (!glfwWindowShouldClose(app.getWindow()))
 	{
@@ -173,7 +173,7 @@ int main(void)
 			DrawElementsIndirectCommand* cmd = mesh.bufferIndirect_.drawCommands_.data();
 			for (const auto& c : sceneData.shapes_)
 				drawBox3dGL(canvas, mat4(1.0f), sceneData.meshData_.boxes_[c.meshIndex], (cmd++)->instanceCount_ ? vec4(0, 1, 0, 1) : vec4(1, 0, 0, 1));
-			drawBox3dGL(canvas, mat4(1.0f), allScene, vec4(1, 0, 0, 1));
+			drawBox3dGL(canvas, mat4(1.0f), fullScene, vec4(1, 0, 0, 1));
 		}
 
 		// 1. Render scene

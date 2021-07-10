@@ -290,12 +290,12 @@ int main(void)
 
 	FramesPerSecondCounter fpsCounter(0.5f);
 
-	auto ImGuiPushFlagsAndStyles = [](bool value)
+	auto imGuiPushFlagsAndStyles = [](bool value)
 	{
 		ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !value);
 		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * value ? 1.0f : 0.2f);
 	};
-	auto ImGuiPopFlagsAndStyles = []()
+	auto imGuiPopFlagsAndStyles = []()
 	{
 		ImGui::PopItemFlag();
 		ImGui::PopStyleVar();
@@ -576,44 +576,44 @@ int main(void)
 		ImGui::Text("GPU culling:");
 		ImGui::Indent(indentSize);
 		ImGui::Checkbox("Enable GPU culling", &g_EnableGPUCulling);
-		ImGuiPushFlagsAndStyles(g_EnableGPUCulling);
+		imGuiPushFlagsAndStyles(g_EnableGPUCulling);
 		ImGui::Checkbox("Freeze culling frustum (P)", &g_FreezeCullingView);
 		ImGui::Text("Visible meshes: %i", *numVisibleMeshesPtr);
-		ImGuiPopFlagsAndStyles();
+		imGuiPopFlagsAndStyles();
 		ImGui::Unindent(indentSize);
 		ImGui::Separator();
 		ImGui::Text("SSAO:");
 		ImGui::Indent(indentSize);
 		ImGui::Checkbox("Enable SSAO", &g_EnableSSAO);
-		ImGuiPushFlagsAndStyles(g_EnableSSAO);
+		imGuiPushFlagsAndStyles(g_EnableSSAO);
 		ImGui::Checkbox("Enable SSAO blur", &g_EnableBlur);
 		ImGui::SliderFloat("SSAO scale", &g_SSAOParams.scale_, 0.0f, 2.0f);
 		ImGui::SliderFloat("SSAO bias", &g_SSAOParams.bias_, 0.0f, 0.3f);
 		ImGui::SliderFloat("SSAO radius", &g_SSAOParams.radius, 0.02f, 0.2f);
 		ImGui::SliderFloat("SSAO attenuation scale", &g_SSAOParams.attScale, 0.5f, 1.5f);
 		ImGui::SliderFloat("SSAO distance scale", &g_SSAOParams.distScale, 0.0f, 1.0f);
-		ImGuiPopFlagsAndStyles();
+		imGuiPopFlagsAndStyles();
 		ImGui::Unindent(indentSize);
 		ImGui::Separator();
 		ImGui::Text("HDR:");
 		ImGui::Indent(indentSize);
 		ImGui::Checkbox("Enable HDR", &g_EnableHDR);
-		ImGuiPushFlagsAndStyles(g_EnableHDR);
+		imGuiPushFlagsAndStyles(g_EnableHDR);
 		ImGui::SliderFloat("Exposure", &g_HDRParams.exposure_, 0.1f, 2.0f);
 		ImGui::SliderFloat("Max white", &g_HDRParams.maxWhite_, 0.5f, 2.0f);
 		ImGui::SliderFloat("Bloom strength", &g_HDRParams.bloomStrength_, 0.0f, 2.0f);
 		ImGui::SliderFloat("Adaptation speed", &g_HDRParams.adaptationSpeed_, 0.01f, 0.5f);
-		ImGuiPopFlagsAndStyles();
+		imGuiPopFlagsAndStyles();
 		ImGui::Unindent(indentSize);
 		ImGui::Separator();
 		ImGui::Text("Shadows:");
 		ImGui::Indent(indentSize);
 		ImGui::Checkbox("Enable shadows", &g_EnableShadows);
-		ImGuiPushFlagsAndStyles(g_EnableShadows);
+		imGuiPushFlagsAndStyles(g_EnableShadows);
 		ImGui::Checkbox("Show light's frustum (red) and scene AABB (white)", &g_ShowLightFrustum);
 		ImGui::SliderFloat("Light Theta", &g_LightTheta, -85.0f, +85.0f);
 		ImGui::SliderFloat("Light Phi", &g_LightPhi, -85.0f, +85.0f);
-		ImGuiPopFlagsAndStyles();
+		imGuiPopFlagsAndStyles();
 		ImGui::Unindent(indentSize);
 		ImGui::Separator();
 		ImGui::Checkbox("Grid", &g_DrawGrid);
