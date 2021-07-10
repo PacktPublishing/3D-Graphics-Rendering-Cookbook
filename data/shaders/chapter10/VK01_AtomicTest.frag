@@ -3,7 +3,7 @@
 
 //layout (early_fragment_tests) in;
 
-layout (set = 0, binding = 0) buffer GeometrySBO { uint count; };
+layout (set = 0, binding = 0) buffer Atomic { uint count; };
 
 struct node { uint idx; float xx, yy; };
 

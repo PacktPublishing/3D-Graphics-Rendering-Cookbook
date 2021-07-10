@@ -45,7 +45,7 @@ float shadowFactor(vec4 shadowCoord)
 
 	if (shadowCoords4.z > -1.0 && shadowCoords4.z < 1.0)
 	{
-		float depthBias = -0.004;
+		float depthBias = -0.001;
 		float shadowSample = PCF( 13, shadowCoords4.xy, shadowCoords4.z + depthBias );
 		return mix(1.0, 0.3, shadowSample);
 	}
@@ -82,22 +82,7 @@ void main()
 
 	// normal mapping: skip missing normal maps
 	if (length(normalSample) > 0.5)
-        {
-                n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
-        }
-
-//	vec3 lightDir = normalize(vec3(-1.0, 1.0, 0.1));
-//	float NdotL = clamp( dot( n, lightDir ), 0.0, 1.0 );
-
-//	outColor = vec4(vec3(shadowFactor(inShadowCoord)), 1.0);
-
-//	outColor = vec4(texture(shadowMap, uvw.xy).xxx, 1.0);
-//	outColor = vec4( shadowFactor(v_shadowCoord) * NdotL * vec3(1, 1, 1), 1.0 );
-//	outColor = vec4( inShadowCoord.xyz, 1.0 );
-//	outColor = vec4( albedo.rgb * NdotL + emission.rgb, 1.0 );
-//	outColor = vec4( .5 * (normalize(v_worldNormal) + vec3(1.)), 1.0 );
-//	outColor = vec4( n, 1.0 );
-//	outColor = vec4( normalSample, 1.0 );
+		n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
 
 	// image-based lighting (diffuse only)
 	vec3 f0 = vec3(0.04);

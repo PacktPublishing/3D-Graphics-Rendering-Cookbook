@@ -8,7 +8,6 @@ layout(location = 1) in vec3 v_worldNormal;
 
 void main()
 {
-//    outColor = vec4( uvw, 1 );
 	vec3 n = normalize(v_worldNormal);
 
 	vec3 lightDir = normalize(vec3(-1.0, 1.0, 0.1));
