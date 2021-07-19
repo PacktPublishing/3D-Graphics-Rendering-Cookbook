@@ -1,8 +1,7 @@
 #include "shared/vkFramework/VulkanApp.h"
-
-#include "shared/vkRenderers/UtilsVulkanClear.h"
-#include "shared/vkRenderers/UtilsVulkanFinish.h"
-#include "shared/vkRenderers/UtilsVulkanPBRModelRenderer.h"
+#include "shared/vkRenderers/VulkanClear.h"
+#include "shared/vkRenderers/VulkanFinish.h"
+#include "shared/vkRenderers/VulkanPBRModelRenderer.h"
 
 #include "shared/Camera.h"
 
@@ -111,7 +110,7 @@ int main()
 	finish = std::make_unique<VulkanFinish>(vkDev, depthTexture);
 
 	modelPBR = std::make_unique<PBRModelRenderer>(vkDev,
-			sizeof(UBO),
+			(uint32_t)sizeof(UBO),
 			"deps/src/glTF-Sample-Models/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf",
 			"deps/src/glTF-Sample-Models/2.0/DamagedHelmet/glTF/Default_AO.jpg",
 			"deps/src/glTF-Sample-Models/2.0/DamagedHelmet/glTF/Default_emissive.jpg",

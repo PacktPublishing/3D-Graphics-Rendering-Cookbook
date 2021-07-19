@@ -1,6 +1,6 @@
 #pragma once
 
-#include "shared/vkRenderers/UtilsVulkanRendererBase.h"
+#include "shared/vkRenderers/VulkanRendererBase.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
@@ -20,7 +20,7 @@ public:
 	void line(const vec3& p1, const vec3& p2, const vec4& c);
 	void plane3d(const vec3& orig, const vec3& v1, const vec3& v2, int n1, int n2, float s1, float s2, const vec4& color, const vec4& outlineColor);
 	void updateBuffer(VulkanRenderDevice& vkDev, size_t currentImage);
-	void updateUniformBuffer(VulkanRenderDevice& vkDev, const glm::mat4& m, float time, uint32_t currentImage);
+	void updateUniformBuffer(VulkanRenderDevice& vkDev, const glm::mat4& modelViewProj , float time, uint32_t currentImage);
 
 private:
 	struct VertexData

@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanComputeBase.h"
+#include "shared/vkRenderers/VulkanComputeBase.h"
 
 ComputeBase::ComputeBase(VulkanRenderDevice& vkDev, const char* shaderName, uint32_t inputSize, uint32_t outputSize):
 	vkDev(vkDev)

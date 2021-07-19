@@ -1,7 +1,7 @@
 #pragma once
 
 #include "shared/Utils.h"
-#include "shared/vkRenderers/UtilsVulkanComputedItem.h"
+#include "shared/vkRenderers/VulkanComputedItem.h"
 
 struct ComputedImage: public ComputedItem
 {

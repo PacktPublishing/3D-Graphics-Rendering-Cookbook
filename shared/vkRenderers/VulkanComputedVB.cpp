@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanComputedVB.h"
+#include "shared/vkRenderers/VulkanComputedVB.h"
 
 ComputedVertexBuffer::ComputedVertexBuffer(VulkanRenderDevice& vkDev, const char* shaderName,
 	uint32_t indexBufferSize,

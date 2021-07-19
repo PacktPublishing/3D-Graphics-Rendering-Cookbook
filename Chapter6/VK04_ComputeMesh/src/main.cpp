@@ -2,12 +2,12 @@
 
 #include <imgui/imgui.h>
 
-#include "shared/vkRenderers/UtilsVulkanClear.h"
-#include "shared/vkRenderers/UtilsVulkanComputedVB.h"
-#include "shared/vkRenderers/UtilsVulkanComputedImage.h"
-#include "shared/vkRenderers/UtilsVulkanFinish.h"
-#include "shared/vkRenderers/UtilsVulkanModelRenderer.h"
-#include "shared/vkRenderers/UtilsVulkanImGui.h"
+#include "shared/vkRenderers/VulkanClear.h"
+#include "shared/vkRenderers/VulkanComputedVB.h"
+#include "shared/vkRenderers/VulkanComputedImage.h"
+#include "shared/vkRenderers/VulkanFinish.h"
+#include "shared/vkRenderers/VulkanModelRenderer.h"
+#include "shared/vkRenderers/VulkanImGui.h"
 
 struct MouseState
 {

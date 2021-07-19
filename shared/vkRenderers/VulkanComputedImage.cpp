@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanComputedImage.h"
+#include "shared/vkRenderers/VulkanComputedImage.h"
 
 ComputedImage::ComputedImage(VulkanRenderDevice& vkDev, const char* shaderName, uint32_t textureWidth, uint32_t textureHeight, bool supportDownload)
 	: ComputedItem(vkDev, sizeof(uint32_t))

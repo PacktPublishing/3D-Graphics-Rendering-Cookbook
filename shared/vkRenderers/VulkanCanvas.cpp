@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanCanvas.h"
+#include "shared/vkRenderers/VulkanCanvas.h"
 #include "shared/EasyProfilerWrapper.h"
 
 VulkanCanvas::VulkanCanvas(VulkanRenderDevice& vkDev, VulkanImage depth)
@@ -102,10 +102,10 @@ bool VulkanCanvas::createDescriptorSet(VulkanRenderDevice& vkDev)
 	return true;
 }
 
-void VulkanCanvas::updateUniformBuffer(VulkanRenderDevice& vkDev, const glm::mat4& m, float time, uint32_t currentImage)
+void VulkanCanvas::updateUniformBuffer(VulkanRenderDevice& vkDev, const glm::mat4& modelViewProj, float time, uint32_t currentImage)
 {
 	const UniformBuffer ubo = {
-		.mvp = m,
+		.mvp = modelViewProj,
 		.time = time
 	};
 

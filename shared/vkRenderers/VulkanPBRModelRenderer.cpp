@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanPBRModelRenderer.h"
+#include "shared/vkRenderers/VulkanPBRModelRenderer.h"
 
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>

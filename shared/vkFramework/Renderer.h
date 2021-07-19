@@ -25,8 +25,7 @@ struct Renderer
 
 	PipelineInfo initRenderPass(const PipelineInfo& pInfo, const std::vector<VulkanTexture>& outputs,
 		RenderPass renderPass = RenderPass(),
-		RenderPass fallbackPass = RenderPass(),
-		const std::vector<VkSubpassDependency>& extDeps = {})
+		RenderPass fallbackPass = RenderPass())
 	{
 		PipelineInfo outInfo = pInfo;
 		if (!outputs.empty()) // offscreen rendering
@@ -43,7 +42,7 @@ struct Renderer
 			outInfo.height = processingHeight;
 
 			renderPass_  = (renderPass.handle != VK_NULL_HANDLE) ? renderPass :
-					((isDepthFormat(outputs[0].format) && (outputs.size() == 1)) ? ctx_.resources.addDepthRenderPass(outputs) : ctx_.resources.addRenderPass(outputs, RenderPassCreateInfo(), true, extDeps));
+					((isDepthFormat(outputs[0].format) && (outputs.size() == 1)) ? ctx_.resources.addDepthRenderPass(outputs) : ctx_.resources.addRenderPass(outputs, RenderPassCreateInfo(), true));
 			framebuffer_ = ctx_.resources.addFramebuffer(renderPass_, outputs);
 		} else
 		{

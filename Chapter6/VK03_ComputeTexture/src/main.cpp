@@ -1,9 +1,8 @@
 #include "shared/vkFramework/VulkanApp.h"
-#include "shared/vkRenderers/UtilsVulkanSingleQuad.h"
-#include "shared/vkRenderers/UtilsVulkanComputedImage.h"
-
-#include "shared/vkRenderers/UtilsVulkanClear.h"
-#include "shared/vkRenderers/UtilsVulkanFinish.h"
+#include "shared/vkRenderers/VulkanSingleQuad.h"
+#include "shared/vkRenderers/VulkanComputedImage.h"
+#include "shared/vkRenderers/VulkanClear.h"
+#include "shared/vkRenderers/VulkanFinish.h"
 
 std::unique_ptr<VulkanClear> clear;
 std::unique_ptr<VulkanSingleQuadRenderer> quad;

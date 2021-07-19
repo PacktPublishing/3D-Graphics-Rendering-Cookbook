@@ -1,8 +1,7 @@
 #include "shared/vkFramework/VulkanApp.h"
-
-#include "shared/vkRenderers/UtilsVulkanClear.h"
-#include "shared/vkRenderers/UtilsVulkanFinish.h"
-#include "shared/vkRenderers/UtilsVulkanMultiMeshRenderer.h"
+#include "shared/vkRenderers/VulkanClear.h"
+#include "shared/vkRenderers/VulkanFinish.h"
+#include "shared/vkRenderers/VulkanMultiMeshRenderer.h"
 
 const uint32_t kScreenWidth = 1280;
 const uint32_t kScreenHeight = 720;

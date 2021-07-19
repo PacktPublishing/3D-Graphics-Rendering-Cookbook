@@ -195,8 +195,7 @@ struct VulkanResources
 
 	RenderPass addRenderPass(const std::vector<VulkanTexture>& outputs, const RenderPassCreateInfo& ci = {
 		.clearColor_ = true, .clearDepth_ = true,
-		.flags_ = eRenderPassBit_Offscreen | eRenderPassBit_First }, bool useDepth = true,
-		const std::vector<VkSubpassDependency>& extDeps = {});
+		.flags_ = eRenderPassBit_Offscreen | eRenderPassBit_First }, bool useDepth = true);
 
 	RenderPass addDepthRenderPass(const std::vector<VulkanTexture>& outputs, const RenderPassCreateInfo& ci = {
 		.clearColor_ = false, .clearDepth_ = true,

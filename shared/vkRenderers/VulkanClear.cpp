@@ -1,6 +1,6 @@
 #include "shared/Utils.h"
 #include "shared/UtilsMath.h"
-#include "shared/vkRenderers/UtilsVulkanClear.h"
+#include "shared/vkRenderers/VulkanClear.h"
 #include "shared/EasyProfilerWrapper.h"
 
 VulkanClear::VulkanClear(VulkanRenderDevice& vkDev, VulkanImage depthTexture)

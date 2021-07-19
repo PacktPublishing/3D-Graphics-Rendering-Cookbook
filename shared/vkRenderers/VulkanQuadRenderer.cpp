@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanQuadRenderer.h"
+#include "shared/vkRenderers/VulkanQuadRenderer.h"
 
 static constexpr int MAX_QUADS = 256;
 

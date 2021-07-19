@@ -1130,7 +1130,7 @@ bool createGraphicsPipeline(
 	}
 
 	const VkPipelineVertexInputStateCreateInfo vertexInputInfo = {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
 	};
 
 	const VkPipelineInputAssemblyStateCreateInfo inputAssembly = {
@@ -1455,18 +1455,22 @@ bool createColorOnlyRenderPass(VulkanRenderDevice& vkDev, VkRenderPass* renderPa
 	return createColorAndDepthRenderPass(vkDev, false, renderPass, ci2, colorFormat);
 }
 
-bool createColorAndDepthRenderPass(VulkanRenderDevice& vkDev, bool useDepth, VkRenderPass* renderPass, const RenderPassCreateInfo& ci, VkFormat colorFormat, const std::vector<VkSubpassDependency>& extDeps)
+bool createColorAndDepthRenderPass(VulkanRenderDevice& vkDev, bool useDepth, VkRenderPass* renderPass, const RenderPassCreateInfo& ci, VkFormat colorFormat)
 {
+	const bool offscreenInt = ci.flags_ & eRenderPassBit_OffscreenInternal;
+	const bool first = ci.flags_ & eRenderPassBit_First;
+	const bool last  = ci.flags_ & eRenderPassBit_Last;
+
 	VkAttachmentDescription colorAttachment = {
 		.flags = 0,
 		.format = colorFormat,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = (ci.flags_ & eRenderPassBit_OffscreenInternal) ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
+		.loadOp = offscreenInt ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearColor_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.flags_ & eRenderPassBit_First ? VK_IMAGE_LAYOUT_UNDEFINED : (ci.flags_ & eRenderPassBit_OffscreenInternal ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL),
-		.finalLayout = ci.flags_ & eRenderPassBit_Last ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+		.initialLayout = first ? VK_IMAGE_LAYOUT_UNDEFINED : (offscreenInt ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL),
+		.finalLayout = last ? VK_IMAGE_LAYOUT_PRESENT_SRC_KHR : VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 	};
 
 	const VkAttachmentReference colorAttachmentRef = {
@@ -1478,11 +1482,11 @@ bool createColorAndDepthRenderPass(VulkanRenderDevice& vkDev, bool useDepth, VkR
 		.flags = 0,
 		.format = useDepth ? findDepthFormat(vkDev.physicalDevice) : VK_FORMAT_D32_SFLOAT,
 		.samples = VK_SAMPLE_COUNT_1_BIT,
-		.loadOp = (ci.flags_ & eRenderPassBit_OffscreenInternal) ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearDepth_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
+		.loadOp = offscreenInt ? VK_ATTACHMENT_LOAD_OP_LOAD : (ci.clearDepth_ ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_LOAD),
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
 		.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
-		.initialLayout = ci.clearDepth_ ? VK_IMAGE_LAYOUT_UNDEFINED : (ci.flags_ & eRenderPassBit_OffscreenInternal ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
+		.initialLayout = ci.clearDepth_ ? VK_IMAGE_LAYOUT_UNDEFINED : (offscreenInt ? VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL : VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL),
 		.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL
 	};
 
@@ -1492,10 +1496,7 @@ bool createColorAndDepthRenderPass(VulkanRenderDevice& vkDev, bool useDepth, VkR
 	};
 
 	if (ci.flags_ & eRenderPassBit_Offscreen)
-	{
 		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-//		depthAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-	}
 
 	std::vector<VkSubpassDependency> dependencies = {
 		/* VkSubpassDependency */ {
@@ -1537,10 +1538,6 @@ bool createColorAndDepthRenderPass(VulkanRenderDevice& vkDev, bool useDepth, VkR
 			.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT
 		};
 	}
-
-	/* add external dependencies */
-	for (const auto& dep: extDeps)
-		dependencies.push_back(dep);
 
 	const VkSubpassDescription subpass = {
 		.flags = 0,

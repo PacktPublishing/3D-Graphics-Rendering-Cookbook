@@ -286,7 +286,7 @@ struct RenderPass
 };
 
 bool createColorOnlyRenderPass(VulkanRenderDevice& device, VkRenderPass* renderPass, const RenderPassCreateInfo& ci, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
-bool createColorAndDepthRenderPass(VulkanRenderDevice& device, bool useDepth, VkRenderPass* renderPass, const RenderPassCreateInfo& ci, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM, const std::vector<VkSubpassDependency>& extDeps = {});
+bool createColorAndDepthRenderPass(VulkanRenderDevice& device, bool useDepth, VkRenderPass* renderPass, const RenderPassCreateInfo& ci, VkFormat colorFormat = VK_FORMAT_B8G8R8A8_UNORM);
 bool createDepthOnlyRenderPass(VulkanRenderDevice& vkDev, VkRenderPass* renderPass, const RenderPassCreateInfo& ci);
 
 VkCommandBuffer beginSingleTimeCommands(VulkanRenderDevice& vkDev);

@@ -1,4 +1,4 @@
-#include "shared/vkRenderers/UtilsVulkanModelRenderer.h"
+#include "shared/vkRenderers/VulkanModelRenderer.h"
 #include "shared/EasyProfilerWrapper.h"
 
 #include <glm/glm.hpp>

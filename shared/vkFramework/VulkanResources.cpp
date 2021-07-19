@@ -710,7 +710,7 @@ RenderPass VulkanResources::addFullScreenPass(bool useDepth, const RenderPassCre
 	return result;
 }
 
-RenderPass VulkanResources::addRenderPass(const std::vector<VulkanTexture>& outputs, const RenderPassCreateInfo& ci, bool useDepth, const std::vector<VkSubpassDependency>& extDeps)
+RenderPass VulkanResources::addRenderPass(const std::vector<VulkanTexture>& outputs, const RenderPassCreateInfo& ci, bool useDepth)
 {
 	VkRenderPass renderPass;
 
@@ -732,7 +732,7 @@ RenderPass VulkanResources::addRenderPass(const std::vector<VulkanTexture>& outp
 	{
 		printf("Creating color/depth render pass\n");
 		// TODO: update create...RenderPass to support multiple color attachments
-		if (!createColorAndDepthRenderPass(vkDev, useDepth && (outputs.size() > 1), &renderPass, ci, outputs[0].format, extDeps))
+		if (!createColorAndDepthRenderPass(vkDev, useDepth && (outputs.size() > 1), &renderPass, ci, outputs[0].format))
 		{
 			printf("Unable to create offscreen render pass\n");
 			exit(EXIT_FAILURE);

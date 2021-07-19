@@ -1,7 +1,7 @@
 #include "shared/Utils.h"
 #include "shared/UtilsMath.h"
 #include "shared/UtilsVulkan.h"
-#include "shared/vkRenderers/UtilsVulkanCube.h"
+#include "shared/vkRenderers/VulkanCube.h"
 #include "shared/EasyProfilerWrapper.h"
 
 bool CubeRenderer::createDescriptorSet(VulkanRenderDevice& vkDev)

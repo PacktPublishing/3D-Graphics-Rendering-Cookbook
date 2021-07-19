@@ -1,5 +1,5 @@
 #include "shared/vkFramework/VulkanApp.h"
-#include "shared/vkRenderers/UtilsVulkanComputeBase.h"
+#include "shared/vkRenderers/VulkanComputeBase.h"
 
 #include <gli/gli.hpp>
 #include <gli/texture2d.hpp>

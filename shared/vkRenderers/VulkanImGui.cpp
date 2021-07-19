@@ -1,6 +1,6 @@
 #include <imgui/imgui.h>
 
-#include "shared/vkRenderers/UtilsVulkanImGui.h"
+#include "shared/vkRenderers/VulkanImGui.h"
 #include "shared/EasyProfilerWrapper.h"
 
 #include <glm/glm.hpp>
@@ -165,10 +165,11 @@ void addImGuiItem(uint32_t width, uint32_t height, VkCommandBuffer commandBuffer
 		};
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
+		// this is added in the Chapter 6: Using descriptor indexing in Vulkan to render an ImGui UI
 		if (textures.size() > 0)
 		{
 			uint32_t texture = (uint32_t)(intptr_t)pcmd->TextureId;
-			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT/*VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT*/, 0, sizeof(uint32_t), (const void*)&texture);
+			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(uint32_t), (const void*)&texture);
 		}
 
 		vkCmdDraw(commandBuffer,

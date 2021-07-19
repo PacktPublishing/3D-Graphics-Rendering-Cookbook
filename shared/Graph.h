@@ -4,7 +4,7 @@
 #include <limits>
 
 #include "shared/EasyProfilerWrapper.h"
-#include "shared/vkRenderers/UtilsVulkanCanvas.h"
+#include "shared/vkRenderers/VulkanCanvas.h"
 
 class LinearGraph
 {
