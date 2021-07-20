@@ -18,7 +18,7 @@ https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1
 Downloading assets and dependencies:
 ------------------------------------
 
-Run the `bootstrap.py` script from the root filder.
+Run the `bootstrap.py` script from the root folder of this repository.
 
 Windows build instructions:
 ---------------------------
@@ -31,7 +31,7 @@ start RenderingCookbook.sln
 ```
 
 Linux build instructions:
----------------------------
+-------------------------
 
 ```
 mkdir build
@@ -40,4 +40,11 @@ cmake ..
 cd ..
 ```
 
-*** Run compiled demos from the root folder of this repository ***
+Running the demos:
+------------------
+
+**Run compiled demos from the root folder of this repository**
+
+Demo applications from this book require `.obj`/`.gltf2` assets to be converted to our run-time loadable formats.
+Make sure you run `Chapter5/MeshConvert` before running anything else from chapters 5-10,
+and `Chapter7/SceneConverter` before running demos from chapters 7-10.
