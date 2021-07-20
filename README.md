@@ -18,7 +18,7 @@ https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1
 Downloading assets and dependencies:
 ------------------------------------
 
-Run the `bootstrap.py` script from the root folder of this repository.
+Run the `bootstrap.py` script from the root folder of this repository. Make sure you have ~15Gb of free space before you download the assets and build the source code.
 
 Windows build instructions:
 ---------------------------
