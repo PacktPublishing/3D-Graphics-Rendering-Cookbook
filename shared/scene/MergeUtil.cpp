@@ -63,7 +63,7 @@ static void mergeIndexArray(MeshData& md, const std::vector<uint32_t>& meshesToM
 
 	// all the merged indices are now in lastMesh
 	Mesh lastMesh = md.meshes_[meshesToMerge[0]];
-	lastMesh.indexOffset =
+	lastMesh.indexOffset = copyOffset;
 	lastMesh.lodOffset[0] = copyOffset;
 	lastMesh.lodOffset[1] = mergeOffset;
 	lastMesh.lodCount = 1;
