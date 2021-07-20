@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 from __future__ import print_function
 import platform
@@ -13,13 +13,13 @@ import hashlib
 import json
 import getopt
 import traceback
+import urllib
 #import progressbar
 
 try:
     from urllib.request import urlparse
     from urllib.request import urlunparse
     from urllib.request import urlretrieve
-    from urllib.request import URLopener
     from urllib.request import quote
 except ImportError:
     from urlparse import urlparse
@@ -86,11 +86,6 @@ def dlog(string):
     if DEBUG_OUTPUT:
         print("*** " + string)
 
-
-class MyURLOpener(URLopener):
-    pass
-
-
 def executeCommand(command, printCommand = False, quiet = False):
 
     printCommand = printCommand or DEBUG_OUTPUT
@@ -114,9 +109,15 @@ def dieIfNonZero(res):
     if res != 0:
         raise ValueError("Command returned non-zero status: " + str(res));
 
+def escapifyPath(path):
+    if not path.find(" "):
+        return path
+    if platform.system() == "Windows":
+        return "\"" + path + "\""
+    return path.replace("\\ ", " ")
 
 def cloneRepository(type, url, target_name, revision = None, try_only_local_operations = False):
-    target_dir = os.path.join(SRC_DIR, target_name)
+    target_dir = escapifyPath(os.path.join(SRC_DIR, target_name))
     target_dir_exists = os.path.exists(target_dir)
     log("Cloning " + url + " to " + target_dir)
 
@@ -344,8 +345,11 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
             downloadSCP(p.hostname, p.username, p.path, download_dir)
         else:
             if user_agent is not None:
-                MyURLOpener.version = user_agent
-                MyURLOpener().retrieve(url, target_filename)
+                opener = urllib.request.build_opener()
+                opener.addheaders = [('User-agent', user_agent)]
+                f = open(target_filename, 'wb')
+                f.write(opener.open(url).read())
+                f.close()
             else:
                 urlretrieve(url, target_filename)
     else:
@@ -818,6 +822,12 @@ def main(argv):
 
             # write out cached state
             writeJSONData(sdata, state_filename)
+        except urllib.error.URLError as e:
+            log("ERROR: Failure to bootstrap library " + name + " (urllib.error.URLError: reason " + str(e.reason) + ")")
+            if break_on_first_error:
+                exit(-1)
+            traceback.print_exc()
+            failed_libraries.append(name)
         except:
             log("ERROR: Failure to bootstrap library " + name + " (reason: " + str(sys.exc_info()[0]) + ")")
             if break_on_first_error:
