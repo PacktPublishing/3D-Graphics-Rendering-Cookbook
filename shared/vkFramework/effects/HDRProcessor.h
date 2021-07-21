@@ -127,6 +127,12 @@ struct HDRProcessor: public CompositeRenderer
 		renderers_[29].enabled_ = false; // disable composerOdd at the beginning
 
 		renderers_.emplace_back(resultToShader, false);
+
+		// Convert 32.0 to S5.10 fixed point format (half-float) manually for RGB channels, Set alpha to 1.0
+//		const uint16_t brightPixel[4] = { 0x5400, 0x5400, 0x5400, 0x3C00 }; // 64.0 as initial value
+		const uint16_t brightPixel[4] = { 0x5000, 0x5000, 0x5000, 0x3C00 }; // 32.0 as initial value
+		updateTextureImage(c.vkDev, adaptedLuminanceTex1.image.image, adaptedLuminanceTex1.image.imageMemory, 1, 1, LuminosityFormat, 1, &brightPixel, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+		updateTextureImage(c.vkDev, adaptedLuminanceTex2.image.image, adaptedLuminanceTex2.image.imageMemory, 1, 1, LuminosityFormat, 1, &brightPixel, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	}
 
 	void fillCommandBuffer(VkCommandBuffer cmdBuffer, size_t currentImage, VkFramebuffer fb1 = VK_NULL_HANDLE, VkRenderPass rp1 = VK_NULL_HANDLE) override

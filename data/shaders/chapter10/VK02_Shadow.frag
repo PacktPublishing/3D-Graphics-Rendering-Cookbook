@@ -18,6 +18,8 @@ layout(location = 0) out vec4 outColor;
 // Buffer with PBR material coefficients
 layout(binding = 4) readonly buffer MatBO  { MaterialData data[]; } mat_bo;
 
+layout(binding = 6) readonly buffer ShadowBO  { mat4 lightProj; mat4 lightView; } shadow_bo;
+
 layout(binding = 7) uniform samplerCube texEnvMap;
 layout(binding = 8) uniform samplerCube texEnvMapIrradiance;
 layout(binding = 9) uniform sampler2D   texBRDF_LUT;
@@ -41,6 +43,9 @@ float PCF(int kernelSize, vec2 shadowCoord, float depth)
 
 float shadowFactor(vec4 shadowCoord)
 {
+	if (shadow_bo.lightProj[3][3] == 0.0)
+		return 1.0;
+
 	vec4 shadowCoords4 = shadowCoord / shadowCoord.w;
 
 	if (shadowCoords4.z > -1.0 && shadowCoords4.z < 1.0)
