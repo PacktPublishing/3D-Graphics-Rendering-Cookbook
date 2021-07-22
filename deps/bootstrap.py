@@ -110,7 +110,7 @@ def dieIfNonZero(res):
         raise ValueError("Command returned non-zero status: " + str(res));
 
 def escapifyPath(path):
-    if not path.find(" "):
+    if path.find(" ") == -1:
         return path
     if platform.system() == "Windows":
         return "\"" + path + "\""

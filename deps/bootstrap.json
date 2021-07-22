@@ -28,7 +28,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/ocornut/imgui.git",
-        "revision" : "v1.82"
+        "revision" : "v1.83"
     }
 },
 {
@@ -60,7 +60,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/bombomby/optick.git",
-        "revision": "06322ee59567f1f89b882f8ec7ce733b4c7c001d"
+        "revision": "1.3.1.0"
     }
 },
 {
