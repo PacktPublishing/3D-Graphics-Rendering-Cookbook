@@ -48,3 +48,94 @@ Running the demos:
 Demo applications from this book require `.obj`/`.gltf2` assets to be converted to our run-time loadable formats.
 Make sure you run `Chapter5/MeshConvert` before running anything else from chapters 5-10,
 and `Chapter7/SceneConverter` before running demos from chapters 7-10.
+
+Chapter1
+--------
+
+* 1_Bootstrap
+* 2_CMake
+
+Chapter2
+--------
+
+* 01_GLFW
+* 02_GLM
+* 03_STB
+* 04_ImGui
+* 05_EasyProfiler
+* 06_Optick
+* 07_Assimp
+* 08_ETC2Comp
+* 09_Taskflow
+* 10_MeshOptimizer
+
+Chapter3
+--------
+
+* GL01_APIWrapping
+* GL02_VtxPulling
+* GL03_CubeMap
+* VK01_GLSLang
+* VK02_DemoApp
+
+Chapter4
+--------
+
+* GL01_Camera
+* GL02_FPS
+* VK01_DemoApp
+
+Chapter5
+--------
+
+* GL01_Grid
+* GL02_Tessellation
+* GL03_MeshRenderer
+* MeshConvert
+* VK01_MultiMeshDraw
+
+Chapter6
+--------
+
+* GL01_PBR
+* Util01_FilterEnvmap
+* VK01_BRDF_LUT
+* VK02_DescriptorIndexing
+* VK03_ComputeTexture
+* VK04_ComputeMesh
+* VK05_PBR
+
+Chapter7
+--------
+
+* GL01_LargeScene
+* SceneConverter
+* VK01_SceneGraph
+* VK02_LargeScene
+
+Chapter8
+--------
+
+* GL01_ShadowMapping
+* GL02_SSAO
+* GL03_HDR
+* GL04_HDR_Adaptation
+* VK01_ShadowMapping
+* VK02_SSAO
+* VK03_HDR
+
+Chapter9
+--------
+
+* VK01_Physics
+
+Chapter10
+---------
+
+* GL01_CullingCPU
+* GL02_CullingGPU
+* GL03_OITransparency
+* GL04_LazyLoading
+* GL05_Final
+* VK01_AtomicsTest
+* VK02_Final
