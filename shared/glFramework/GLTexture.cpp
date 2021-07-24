@@ -30,6 +30,23 @@ GLTexture::GLTexture(GLenum type, int width, int height, GLenum internalFormat)
 	glTextureStorage2D(handle_, getNumMipMapLevels2D(width, height), internalFormat, width, height);
 }
 
+/// Draw a checkerboard on a pre-allocated square RGB or RGBA image.
+static void _gen_checkerboard_img( uint8_t* img_ptr, int w, int h, int n )
+{
+	assert( img_ptr && w > 0 && h > 0 && n > 0 );
+	assert( w == h && ( n == 3 || n == 4 ) );
+	if ( !img_ptr || w <= 0 || h <= 0 || n <= 0 ) { return; }
+	if ( w != h || ( n != 3 && n != 4 ) ) { return; }
+
+	for ( int i = 0; i < w * h; i++ )
+	{
+		int row            = i / w;
+		int col            = i % w;
+		img_ptr[i * n + 0] = img_ptr[i * n + 1] = img_ptr[i * n + 2] = 0xFF * ( ( row + col ) % 2 );
+		if ( n > 3 ) { img_ptr[i * n + 3] = 0xFF; }
+	}
+}
+
 GLTexture::GLTexture(GLenum type, const char* fileName)
 	: type_(type)
 {
@@ -64,8 +81,23 @@ GLTexture::GLTexture(GLenum type, const char* fileName)
 		}
 		else
 		{
-			const uint8_t* img = stbi_load(fileName, &w, &h, nullptr, STBI_rgb_alpha);
-			assert(img);
+			uint8_t* img = stbi_load(fileName, &w, &h, nullptr, STBI_rgb_alpha);
+			
+			// Note(Anton): replaced assert( img ) with a fallback image to prevent crashes with missing files or bad (eg very long) paths.
+			if ( !img )
+			{
+				fprintf( stderr, "WARNING: could not load image `%s`, using a fallback.\n", fileName );
+				w = 128;
+				h = 128;
+				img = (uint8_t*)malloc( w * h * 4 );
+				if ( !img )
+				{
+					fprintf( stderr, "FATAL ERROR: Out of memory allocating image for fallback texture\n" );
+					abort();
+				}
+				_gen_checkerboard_img( img, w, h, 4 ) ;
+			}
+
 			numMipmaps = getNumMipMapLevels2D(w, h);
 			glTextureStorage2D(handle_, numMipmaps, GL_RGBA8, w, h);
 			glTextureSubImage2D(handle_, 0, 0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, img);
