@@ -12,17 +12,23 @@ MeshFileHeader loadMeshData(const char* meshFile, MeshData& out)
 
 	assert(f); // Did you forget to run "Ch5_Tool05_MeshConvert"?
 
+	if (!f)
+	{
+		printf("Cannot open %s. Did you forget to run \"Ch5_Tool05_MeshConvert\"?\n", meshFile);
+		exit(EXIT_FAILURE);
+	}
+
 	if (fread(&header, 1, sizeof(header), f) != sizeof(header))
 	{
 		printf("Unable to read mesh file header\n");
-		exit(255);
+		exit(EXIT_FAILURE);
 	}
 
 	out.meshes_.resize(header.meshCount);
 	if (fread(out.meshes_.data(), sizeof(Mesh), header.meshCount, f) != header.meshCount)
 	{
 		printf("Could not read mesh descriptors\n");
-		exit(255);
+		exit(EXIT_FAILURE);
 	}
 	out.boxes_.resize(header.meshCount);
 	if (fread(out.boxes_.data(), sizeof(BoundingBox), header.meshCount, f) != header.meshCount)
