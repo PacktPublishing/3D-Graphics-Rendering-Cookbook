@@ -149,10 +149,16 @@ Chapter6
   ![image](https://user-images.githubusercontent.com/2510143/126839692-9b6ec131-34cb-47de-95be-97faaf66f43c.png)
 
 * Util01_FilterEnvmap
+
+  ![image](https://user-images.githubusercontent.com/2510143/126911851-d3f383bd-0a87-4dfb-a1c2-37c2d81d2f8e.png)
+
 * VK01_BRDF_LUT
+
+  ![image](https://user-images.githubusercontent.com/2510143/126911829-01cd9d5c-5994-43ea-beef-14aa22b97512.png)
+
 * VK02_DescriptorIndexing
 
- ![image](https://user-images.githubusercontent.com/2510143/126839776-9642d163-0be5-47f1-90b3-65c5b6767200.png) 
+  ![image](https://user-images.githubusercontent.com/2510143/126839776-9642d163-0be5-47f1-90b3-65c5b6767200.png) 
 
 * VK03_ComputeTexture
 
