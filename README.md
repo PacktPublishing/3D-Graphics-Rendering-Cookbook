@@ -218,6 +218,8 @@ Chapter8
 
 * VK03_HDR
 
+  ![image](https://user-images.githubusercontent.com/2510143/127025874-b13eba3b-7406-45a7-bdda-d3e3fbc1bb17.png)
+
 Chapter9
 --------
 
