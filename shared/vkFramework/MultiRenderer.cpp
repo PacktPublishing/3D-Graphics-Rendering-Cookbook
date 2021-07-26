@@ -2,6 +2,8 @@
 
 #include <stb/stb_image.h>
 
+uint8_t* genDefaultCheckerboardImage(int* width, int* height);
+
 VKSceneData::VKSceneData(VulkanRenderContext& ctx,
 	const char* meshFile,
 	const char* sceneFile,
@@ -35,7 +37,8 @@ VKSceneData::VKSceneData(VulkanRenderContext& ctx,
 			{
 				int w, h;
 				const uint8_t* img = stbi_load(this->textureFiles_[idx].c_str(), &w, &h, nullptr, STBI_rgb_alpha);
-
+				if (!img)
+					img = genDefaultCheckerboardImage(&w, &h);
 				std::lock_guard lock(loadedFilesMutex_);
 				loadedFiles_.emplace_back(LoadedImageData { idx, w, h, img });
 			}

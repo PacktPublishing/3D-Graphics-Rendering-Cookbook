@@ -32,8 +32,11 @@ GLSceneDataLazy::GLSceneDataLazy(
 		{
 			int w, h;
 			const uint8_t* img = stbi_load(this->textureFiles_[idx].c_str(), &w, &h, nullptr, STBI_rgb_alpha);
-			std::lock_guard lock(loadedFilesMutex_);
-			loadedFiles_.emplace_back(LoadedImageData { idx, w, h, img });
+			if (img)
+			{
+				std::lock_guard lock(loadedFilesMutex_);
+				loadedFiles_.emplace_back(LoadedImageData { idx, w, h, img });
+			}
 		}
 	);
 
