@@ -42,14 +42,17 @@ struct MyApp: public CameraApp
 		// Temporarily we switch between luminances [coming from PingPong light adaptation calculator]
 		hdr(ctx_, HDRLuminance, luminanceResult, mappedUniformBufferAttachment(ctx_.resources, &hdrUniforms, VK_SHADER_STAGE_FRAGMENT_BIT)),
 
-		quads(ctx_, {	hdrTex, HDRLuminance }),
-		imgui(ctx_, {	hdrTex, // 1
+		displayedTextureList(
+			 {	hdrTex,
 				HDRLuminance, luminance.getResult64(),
 				luminance.getResult32(), luminance.getResult16(), luminance.getResult08(),
 				luminance.getResult04(), luminance.getResult02(), luminance.getResult01(), // 2 - 9
 				hdr.getBloom1(), hdr.getBloom2(), hdr.getBrightness(), hdr.getResult(), // 10 - 13
 				HDRLuminance, hdr.getStreaks1(), hdr.getStreaks2(),  // 14 - 16
 				hdr.getAdaptatedLum1(), hdr.getAdaptatedLum2() }),// 17 - 18
+
+		quads(ctx_, displayedTextureList),
+		imgui(ctx_, displayedTextureList),
 
 		toDepth(ctx_, HDRDepth),
 		toShader(ctx_, HDRDepth),
@@ -172,7 +175,7 @@ struct MyApp: public CameraApp
 		multiRenderer.checkLoadedTextures();
 
 		quads.clear();
-		quads.quad(-1.0f, 1.0f, 1.0f, -1.0f, 13);
+		quads.quad(-1.0f, 1.0f, 1.0f, -1.0f, 12);
 	}
 
 private:
@@ -192,6 +195,8 @@ private:
 
 	LuminanceCalculator luminance;
 	HDRProcessor hdr;
+
+	std::vector<VulkanTexture> displayedTextureList;
 
 	GuiRenderer imgui;
 	QuadRenderer quads;

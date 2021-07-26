@@ -82,7 +82,7 @@ struct Renderer
 	void updateTexture(uint32_t textureIndex, VulkanTexture newTexture, uint32_t bindingIndex = 9)
 	{
 		for (auto ds: descriptorSets_)
-			updateTextureInDescriptorSetArray(ctx_.vkDev, ds, newTexture, textureIndex, 9);
+			updateTextureInDescriptorSetArray(ctx_.vkDev, ds, newTexture, textureIndex, bindingIndex);
 	}
 
 protected:

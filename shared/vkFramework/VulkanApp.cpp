@@ -218,8 +218,6 @@ void VulkanApp::mainLoop()
 	double timeStamp = glfwGetTime();
 	float deltaSeconds = 0.0f;
 
-	FramesPerSecondCounter fpsCounter(0.5f);
-
 	do
 	{
 		update(deltaSeconds);
@@ -228,14 +226,14 @@ void VulkanApp::mainLoop()
 		deltaSeconds = static_cast<float>(newTimeStamp - timeStamp);
 		timeStamp = newTimeStamp;
 
-		fpsCounter.tick(deltaSeconds);
+		fpsCounter_.tick(deltaSeconds);
 
 		bool frameRendered = drawFrame(ctx_.vkDev,
 			[this](uint32_t img) { this->updateBuffers(img); },
 			[this](auto cmd, auto img) { ctx_.composeFrame(cmd, img); }
 		);
 
-		fpsCounter.tick(deltaSeconds, frameRendered);
+		fpsCounter_.tick(deltaSeconds, frameRendered);
 
 		glfwPollEvents();
 

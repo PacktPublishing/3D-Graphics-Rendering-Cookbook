@@ -127,7 +127,6 @@ struct VulkanApp
 	{
 		glfwSetWindowUserPointer(window_, this);
 		assignCallbacks();
-		fpsCounter_.printFPS_ = false;
 	}
 
 	~VulkanApp()
