@@ -183,7 +183,7 @@ Chapter7
 * SceneConverter
 * VK01_SceneGraph
 
-  ![image](https://user-images.githubusercontent.com/2510143/126840328-ed3e1126-65be-466b-bc83-7e263a632293.png)
+  ![image](https://user-images.githubusercontent.com/2510143/127224028-df442bb5-8940-4411-9d99-7af7cce63ec7.png)
 
 * VK02_LargeScene
 
