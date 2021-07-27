@@ -131,7 +131,7 @@ private:
 		float emissiveColor[4];
 		memcpy(emissiveColor, &material.emissiveColor_, sizeof(gpuvec4));
 		gpuvec4 oldColor = material.emissiveColor_;
-                ImGui::ColorEdit3("Emissive color", emissiveColor);
+		ImGui::ColorEdit3("Emissive color", emissiveColor);
 
 		if (memcmp(emissiveColor, &oldColor, sizeof(gpuvec4))) {
 			memcpy(&material.emissiveColor_, emissiveColor, sizeof(gpuvec4));
