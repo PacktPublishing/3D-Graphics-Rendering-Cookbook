@@ -20,7 +20,6 @@ layout(binding = 4) readonly buffer MatBO  { MaterialData data[]; } mat_bo;
 layout(binding = 6) uniform samplerCube texEnvMap;
 layout(binding = 7) uniform samplerCube texEnvMapIrradiance;
 layout(binding = 8) uniform sampler2D   texBRDF_LUT;
-///layout(binding = 13) uniform sampler2D texMetalRoughness;
 
 // All 2D textures for all of the materials
 layout(binding = 9) uniform sampler2D textures[];
@@ -35,14 +34,15 @@ void main()
 	vec4 albedo = md.albedoColor_;
 	vec3 normalSample = vec3(0.0, 0.0, 0.0);
 
+	const int INVALID_HANDLE = 2000;
+
 	// fetch albedo
-	if (md.albedoMap_ < 2000)
+	if (md.albedoMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.albedoMap_);
 		albedo = texture(textures[nonuniformEXT(texIdx)], uvw.xy);
 	}
-	// TODO: check invalid texture handling
-	if (md.normalMap_ < 2000)
+	if (md.normalMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.normalMap_);
 		normalSample = texture(textures[nonuniformEXT(texIdx)], uvw.xy).xyz;
@@ -55,17 +55,13 @@ void main()
 
 	// normal mapping: skip missing normal maps
 	if (length(normalSample) > 0.5)
-        {
-                n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
-        }
+	{
+		n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
+	}
 
-	vec3 lightDir = normalize(vec3(-1.0, 1.0, 0.1));
+	vec3 lightDir = normalize(vec3(-1.0, -1.0, 0.1));
 
-	float NdotL = clamp( dot( n, lightDir ), 0.0, 1.0 );
+	float NdotL = clamp( dot(n, lightDir), 0.3, 1.0 );
 
-//	outColor = vec4( NdotL * vec3(1, 0, 0), 1.0 );
 	outColor = vec4( albedo.rgb * NdotL + emission.rgb, 1.0 );
-//	outColor = vec4( .5 * (normalize(v_worldNormal) + vec3(1.)), 1.0 );
-//	outColor = vec4( n, 1.0 );
-//	outColor = vec4( normalSample, 1.0 );
 }

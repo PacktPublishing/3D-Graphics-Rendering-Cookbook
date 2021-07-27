@@ -51,14 +51,15 @@ void main()
 	vec4 albedo = md.albedoColor_;
 	vec3 normalSample = vec3(0.0, 0.0, 0.0);
 
+	const int INVALID_HANDLE = 2000;
+
 	// fetch albedo
-	if (md.albedoMap_ < 2000)
+	if (md.albedoMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.albedoMap_);
 		albedo = texture(textures[nonuniformEXT(texIdx)], uvw.xy);
 	}
-	// TODO: check invalid texture handling
-	if (md.normalMap_ < 2000)
+	if (md.normalMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.normalMap_);
 		normalSample = texture(textures[nonuniformEXT(texIdx)], uvw.xy).xyz;
@@ -95,7 +96,6 @@ void main()
 			{
 				uint fragIndex = uint(gl_FragCoord.y) * (shadow_bo.width)  + uint(gl_FragCoord.x);
 				uint prevIndex = atomicExchange(heads[fragIndex], index);
-//				uint prevIndex = imageAtomicExchange(heads, ivec2(gl_FragCoord.xy), index);
 				fragments[index].color = vec4(outColor.rgb, alpha);
 				fragments[index].depth = gl_FragCoord.z;
 				fragments[index].next  = prevIndex;
@@ -103,6 +103,5 @@ void main()
 		}
 	}
 
-//	discard;
  	outColor = vec4(0, 0, 0, 0);
 }

@@ -35,14 +35,15 @@ void main()
 	vec4 albedo = md.albedoColor_;
 	vec3 normalSample = vec3(0.0, 0.0, 0.0);
 
+	const int INVALID_HANDLE = 2000;
+
 	// fetch albedo
-	if (md.albedoMap_ < 2000)
+	if (md.albedoMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.albedoMap_);
 		albedo = texture(textures[nonuniformEXT(texIdx)], uvw.xy);
 	}
-	// TODO: check invalid texture handling
-	if (md.normalMap_ < 2000)
+	if (md.normalMap_ < INVALID_HANDLE)
 	{
 		uint texIdx = uint(md.normalMap_);
 		normalSample = texture(textures[nonuniformEXT(texIdx)], uvw.xy).xyz;
@@ -55,9 +56,9 @@ void main()
 
 	// normal mapping: skip missing normal maps
 	if (length(normalSample) > 0.5)
-        {
-                n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
-        }
+	{
+		n = perturbNormal(n, normalize(ubo.cameraPos.xyz - v_worldPos.xyz), normalSample, uvw.xy);
+	}
 
 	// image-based lighting (diffuse only)
 	vec3 f0 = vec3(0.04);
