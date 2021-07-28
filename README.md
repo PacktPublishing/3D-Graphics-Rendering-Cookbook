@@ -1,5 +1,6 @@
 # 3D Graphics Rendering Cookbook
-A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan.
+
+**A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
 
 by Sergey Kosarevsky & Viktor Latypov
 
@@ -7,19 +8,26 @@ by Sergey Kosarevsky & Viktor Latypov
 
 This is the code repository for [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook), published by Packt.
 
-**A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
 
 ## What is this book about?
 OpenGL is a popular cross-language, cross-platform application programming interface (API) used for rendering 2D and 3D graphics, while Vulkan is a low-overhead, cross-platform 3D graphics API that targets high-performance applications. 3D Graphics Rendering Cookbook helps you learn about modern graphics rendering algorithms and techniques using C++ programming along with OpenGL and Vulkan APIs.
 
-This book covers the following exciting features: <First 5 What you'll learn points>
+This book covers the following exciting features:
+
 *Improve the performance of legacy OpenGL applications
+
 *Manage a substantial amount of content in real-time 3D rendering engines
+
 *Discover how to debug and profile graphics applications
+
 *Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
+
 *Integrate various rendering techniques into a single application
+
 *Find out how to develop Vulkan applications
+
 *Implement a physically based rendering pipeline from scratch
+
 *Integrate a physics library with your rendering engine
 
 If you feel this book is for you, get your [copy](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629) today!
