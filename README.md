@@ -14,21 +14,21 @@ OpenGL is a popular cross-language, cross-platform application programming inter
 
 This book covers the following exciting features:
 
-*Improve the performance of legacy OpenGL applications
+* Improve the performance of legacy OpenGL applications
 
-*Manage a substantial amount of content in real-time 3D rendering engines
+* Manage a substantial amount of content in real-time 3D rendering engines
 
-*Discover how to debug and profile graphics applications
+* Discover how to debug and profile graphics applications
 
-*Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
+* Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
 
-*Integrate various rendering techniques into a single application
+* Integrate various rendering techniques into a single application
 
-*Find out how to develop Vulkan applications
+* Find out how to develop Vulkan applications
 
-*Implement a physically based rendering pipeline from scratch
+* Implement a physically based rendering pipeline from scratch
 
-*Integrate a physics library with your rendering engine
+* Integrate a physics library with your rendering engine
 
 If you feel this book is for you, get your [copy](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629) today!
 
