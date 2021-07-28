@@ -35,30 +35,17 @@ If you feel this book is for you, get your [copy](https://www.packtpub.com/game-
 <a href="https://www.packtpub.com/?utm_source=github&utm_medium=banner&utm_campaign=GitHubBanner"><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" 
 alt="https://www.packtpub.com/" border="5" /></a>
 
-
-## Instructions and Navigations
-All of the code is organized into folders. For example, Chapter01.
-
-The code will look like the following:
-```
-macro(SETUP_GROUPS src_files)
-foreach(FILE ${src_files})
-get_filename_component(PARENT_DIR "${FILE}" PATH)
-```
-
-**Following is what you need for this book:**
-This book is for 3D graphics developers who are familiar with the mathematical fundamentals of 3D rendering and want to gain expertise in writing fast rendering engines with advanced techniques using C++ libraries and APIs. A solid understanding of C++ and basic linear algebra, as well as experience in creating custom 3D applications without using premade rendering engines is required.
-
-With the following software and hardware list you can run all code files present in the book (Chapter 1-10).
-
-### Software and Hardware List
+Software and Hardware List
+--------------------------
 
 | Chapter | Software required | OS required |
 | -------- | ------------------------------------ | ----------------------------------- |
 | 1-10 | Microsoft Visual Studio 2019 | Windows |
 | 1-10 | GCC 8 | Linux |
-| 1-10 | Python 3.X | Windows, Linux |
+| 1-10 | Python 3.x | Windows, Linux |
 | 1-10 | Vulkan SDK | Windows, Linux |
+
+The code runs on graphics cards as old as GeForce 740M. However, GeForce GTX 1060 or newer is strongly recommended.
 
 Downloading assets and dependencies:
 ------------------------------------
