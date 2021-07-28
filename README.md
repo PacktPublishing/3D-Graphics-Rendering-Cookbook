@@ -1,19 +1,50 @@
-# 3D Graphics Rendering Cookbook
-A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan.
+# Useful Links
 
-by Sergey Kosarevsky & Viktor Latypov
+<a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="" alt="Useful Links" height="256px" align="right"></a>
 
-Published by Packt
+This is the code repository for [Useful Links](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629), published by Packt.
 
-https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197
+**A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
 
-![image](https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png)
+## What is this book about?
+0
 
-===========================
+This book covers the following exciting features:
+Improve the performance of legacy OpenGL applications
+Manage a substantial amount of content in real-time 3D rendering engines
+Discover how to debug and profile graphics applications
+Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
+Integrate various rendering techniques into a single application
+Find out how to develop Vulkan applications
+Implement a physically based rendering pipeline from scratch
+Integrate a physics library with your rendering engine
 
-![image](https://user-images.githubusercontent.com/2510143/120815793-d538de80-c558-11eb-9a0b-149b1212a442.png)
+If you feel this book is for you, get your [copy](https://www.amazon.com/dp/1838986197) today!
 
-===========================
+<a href="https://www.packtpub.com/?utm_source=github&utm_medium=banner&utm_campaign=GitHubBanner"><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" 
+alt="https://www.packtpub.com/" border="5" /></a>
+
+## Instructions and Navigations
+All of the code is organized into folders. For example, Chapter02.
+
+The code will look like the following:
+```
+macro(SETUP_GROUPS src_files)
+foreach(FILE ${src_files})
+get_filename_component(PARENT_DIR "${FILE}" PATH)
+```
+
+**Following is what you need for this book:**
+This book is for 3D graphics developers who are familiar with the mathematical fundamentals of 3D rendering and want to gain expertise in writing fast rendering engines with advanced techniques using C++ libraries and APIs. A solid understanding of C++ and basic linear algebra, as well as experience in creating custom 3D applications without using premade rendering engines is required.
+
+With the following software and hardware list you can run all code files present in the book (Chapter 1-10).
+### Software and Hardware List
+| Chapter | Software required | OS required |
+| -------- | ------------------------------------ | ----------------------------------- |
+| 1-10 | Microsoft Visual Studio 2019 | Windows |
+| 1-10 | GCC 8 | Linux |
+| 1-10 | Python 3.X | Windows, Linux |
+| 1-10 | Vulkan SDK | Windows, Linux |
 
 Downloading assets and dependencies:
 ------------------------------------
@@ -258,4 +289,33 @@ Chapter10
 * VK02_Final
 
   ![image](https://user-images.githubusercontent.com/2510143/126841602-e70b4e8d-1dd9-49df-ad9a-54ffa20b72f0.png)
+
+
+
+
+We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://static.packt-cdn.com/downloads/9781838986193_ColorImages.pdf).
+
+### Related products
+* Blender 3D By Example - Second Edition [[Packt]](https://www.packtpub.com/product/blender-3d-by-example-second-edition/9781789612561?utm_source=github&utm_medium=repository&utm_campaign=9781789612561) [[Amazon]](https://www.amazon.com/dp/178961256X)
+
+* Vulkan Cookbook [[Packt]](https://www.packtpub.com/product/vulkan-cookbook/9781786468154?utm_source=github&utm_medium=repository&utm_campaign=9781786468154) [[Amazon]](https://www.amazon.com/dp/1786468158)
+
+*  [[Packt]]() [[Amazon]](https://www.amazon.com/dp/)
+
+*  [[Packt]]() [[Amazon]](https://www.amazon.com/dp/)
+
+## Get to Know the Authors
+**Sergey Kosarevsky**
+Sergey Kosarevsky is a software engineer with experience in C++ and 3D graphics. He worked for mobile industry companies and was involved in 3D graphics projects at SPB Software, Yandex, Layar and Blippar, TWNKLS, and DAQRI, where he designed and implemented real-time rendering technology. He has more than 17 years of software development experience and more than 10 years of mobile and embedded 3D graphics experience. In his Ph.D. thesis, Sergey employed computer vision to solve mechanical engineering problems. He has co-authored several books on mobile software development in C++.
+
+**Viktor Latypov**
+Viktor Latypov is a software engineer specializing in embedded C/C++, 3D graphics, and computer vision. With more than 15 years of software development experience and a Ph.D. in Applied Mathematics, he has implemented a number of real-time renderers for medical and automotive applications over the last 10 years.
+Together with Sergey, he has co-authored two books on mobile software development in C++
+
+
+## Other books by the authors
+[Android NDK Game Development Cookbook](https://www.packtpub.com/product/android-ndk-game-development-cookbook/9781782167785?utm_source=github&utm_medium=repository&utm_campaign=9781782167785)
+
+[Mastering Android NDK](https://www.packtpub.com/product/mastering-android-ndk/9781785288333?utm_source=github&utm_medium=repository&utm_campaign=9781785288333)
+
 
