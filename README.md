@@ -5,9 +5,9 @@ by Sergey Kosarevsky & Viktor Latypov
 
 <a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png" alt="Book Name" height="256px" align="right"></a>
 
-This is the code repository for [Book Name](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook), published by Packt.
+This is the code repository for [3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook), published by Packt.
 
-**Subtitle from EPIC**
+**A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
 
 ## What is this book about?
 OpenGL is a popular cross-language, cross-platform application programming interface (API) used for rendering 2D and 3D graphics, while Vulkan is a low-overhead, cross-platform 3D graphics API that targets high-performance applications. 3D Graphics Rendering Cookbook helps you learn about modern graphics rendering algorithms and techniques using C++ programming along with OpenGL and Vulkan APIs.
@@ -304,7 +304,7 @@ We also provide a PDF file that has color images of the screenshots/diagrams use
 * Vulkan Cookbook [[Packt]](https://www.packtpub.com/product/vulkan-cookbook/9781786468154?utm_source=github&utm_medium=repository&utm_campaign=9781786468154) [[Amazon]](https://www.amazon.com/dp/1786468158)
 
 
-## Get to Know the Author
+## Get to Know the Authors
 **Sergey Kosarevsky**
 Sergey Kosarevsky is a software engineer with experience in C++ and 3D graphics. He worked for mobile industry companies and was involved in 3D graphics projects at SPB Software, Yandex, Layar and Blippar, TWNKLS, and DAQRI, where he designed and implemented real-time rendering technology. He has more than 17 years of software development experience and more than 10 years of mobile and embedded 3D graphics experience. In his Ph.D. thesis, Sergey employed computer vision to solve mechanical engineering problems. He has co-authored several books on mobile software development in C++.
 
