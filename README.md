@@ -1,31 +1,35 @@
-# Useful Links
+# 3D Graphics Rendering Cookbook
+A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan.
 
-<a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="" alt="Useful Links" height="256px" align="right"></a>
+by Sergey Kosarevsky & Viktor Latypov
 
-This is the code repository for [Useful Links](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629), published by Packt.
+<a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png" alt="Book Name" height="256px" align="right"></a>
 
-**A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
+This is the code repository for [Book Name](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook), published by Packt.
+
+**Subtitle from EPIC**
 
 ## What is this book about?
-0
+OpenGL is a popular cross-language, cross-platform application programming interface (API) used for rendering 2D and 3D graphics, while Vulkan is a low-overhead, cross-platform 3D graphics API that targets high-performance applications. 3D Graphics Rendering Cookbook helps you learn about modern graphics rendering algorithms and techniques using C++ programming along with OpenGL and Vulkan APIs.
 
-This book covers the following exciting features:
-Improve the performance of legacy OpenGL applications
-Manage a substantial amount of content in real-time 3D rendering engines
-Discover how to debug and profile graphics applications
-Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
-Integrate various rendering techniques into a single application
-Find out how to develop Vulkan applications
-Implement a physically based rendering pipeline from scratch
-Integrate a physics library with your rendering engine
+This book covers the following exciting features: <First 5 What you'll learn points>
+*Improve the performance of legacy OpenGL applications
+*Manage a substantial amount of content in real-time 3D rendering engines
+*Discover how to debug and profile graphics applications
+*Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
+*Integrate various rendering techniques into a single application
+*Find out how to develop Vulkan applications
+*Implement a physically based rendering pipeline from scratch
+*Integrate a physics library with your rendering engine
 
-If you feel this book is for you, get your [copy](https://www.amazon.com/dp/1838986197) today!
+If you feel this book is for you, get your [copy](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629) today!
 
 <a href="https://www.packtpub.com/?utm_source=github&utm_medium=banner&utm_campaign=GitHubBanner"><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" 
 alt="https://www.packtpub.com/" border="5" /></a>
 
+
 ## Instructions and Navigations
-All of the code is organized into folders. For example, Chapter02.
+All of the code is organized into folders. For example, Chapter01.
 
 The code will look like the following:
 ```
@@ -38,7 +42,9 @@ get_filename_component(PARENT_DIR "${FILE}" PATH)
 This book is for 3D graphics developers who are familiar with the mathematical fundamentals of 3D rendering and want to gain expertise in writing fast rendering engines with advanced techniques using C++ libraries and APIs. A solid understanding of C++ and basic linear algebra, as well as experience in creating custom 3D applications without using premade rendering engines is required.
 
 With the following software and hardware list you can run all code files present in the book (Chapter 1-10).
+
 ### Software and Hardware List
+
 | Chapter | Software required | OS required |
 | -------- | ------------------------------------ | ----------------------------------- |
 | 1-10 | Microsoft Visual Studio 2019 | Windows |
@@ -290,9 +296,6 @@ Chapter10
 
   ![image](https://user-images.githubusercontent.com/2510143/126841602-e70b4e8d-1dd9-49df-ad9a-54ffa20b72f0.png)
 
-
-
-
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://static.packt-cdn.com/downloads/9781838986193_ColorImages.pdf).
 
 ### Related products
@@ -300,11 +303,8 @@ We also provide a PDF file that has color images of the screenshots/diagrams use
 
 * Vulkan Cookbook [[Packt]](https://www.packtpub.com/product/vulkan-cookbook/9781786468154?utm_source=github&utm_medium=repository&utm_campaign=9781786468154) [[Amazon]](https://www.amazon.com/dp/1786468158)
 
-*  [[Packt]]() [[Amazon]](https://www.amazon.com/dp/)
 
-*  [[Packt]]() [[Amazon]](https://www.amazon.com/dp/)
-
-## Get to Know the Authors
+## Get to Know the Author
 **Sergey Kosarevsky**
 Sergey Kosarevsky is a software engineer with experience in C++ and 3D graphics. He worked for mobile industry companies and was involved in 3D graphics projects at SPB Software, Yandex, Layar and Blippar, TWNKLS, and DAQRI, where he designed and implemented real-time rendering technology. He has more than 17 years of software development experience and more than 10 years of mobile and embedded 3D graphics experience. In his Ph.D. thesis, Sergey employed computer vision to solve mechanical engineering problems. He has co-authored several books on mobile software development in C++.
 
@@ -313,9 +313,12 @@ Viktor Latypov is a software engineer specializing in embedded C/C++, 3D graphic
 Together with Sergey, he has co-authored two books on mobile software development in C++
 
 
+
 ## Other books by the authors
 [Android NDK Game Development Cookbook](https://www.packtpub.com/product/android-ndk-game-development-cookbook/9781782167785?utm_source=github&utm_medium=repository&utm_campaign=9781782167785)
 
 [Mastering Android NDK](https://www.packtpub.com/product/mastering-android-ndk/9781785288333?utm_source=github&utm_medium=repository&utm_campaign=9781785288333)
 
 
+### Suggestions and Feedback
+[Click here](https://docs.google.com/forms/d/e/1FAIpQLSdy7dATC6QmEL81FIUuymZ0Wy9vH1jHkvpY57OiMeKGqib_Ow/viewform) if you have any feedback or suggestions.
