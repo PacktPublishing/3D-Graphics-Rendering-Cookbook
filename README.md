@@ -288,7 +288,7 @@ Chapter10
 We also provide a PDF file that has color images of the screenshots/diagrams used in this book. [Click here to download it](https://static.packt-cdn.com/downloads/9781838986193_ColorImages.pdf).
 
 ### Related products
-* Blender 3D By Example - Second Edition [[Packt]](https://www.packtpub.com/product/blender-3d-by-example-second-edition/9781789612561?utm_source=github&utm_medium=repository&utm_campaign=9781789612561) [[Amazon]](https://www.amazon.com/dp/178961256X)
+* OpenGL 4 Shading Language Cookbook - Third Edition [[Packt]](https://www.packtpub.com/product/opengl-4-shading-language-cookbook-third-edition/9781789342253) [[Amazon]](https://www.amazon.com/OpenGL-Shading-Language-Cookbook-high-quality/dp/1789342252)
 
 * Vulkan Cookbook [[Packt]](https://www.packtpub.com/product/vulkan-cookbook/9781786468154?utm_source=github&utm_medium=repository&utm_campaign=9781786468154) [[Amazon]](https://www.amazon.com/dp/1786468158)
 
