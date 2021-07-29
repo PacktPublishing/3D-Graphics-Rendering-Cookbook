@@ -41,6 +41,22 @@ Software and Hardware List
 
 The code runs on graphics cards as old as GeForce 740M. However, GeForce GTX 1060 or newer is strongly recommended.
 
+## Instructions and Navigations
+All of the code is organized into folders. For example, Chapter01.
+
+The code will look like the following:
+```
+macro(SETUP_GROUPS src_files)
+foreach(FILE ${src_files})
+get_filename_component(PARENT_DIR "${FILE}" PATH)
+```
+
+**Following is what you need for this book:**
+This book is for 3D graphics developers who are familiar with the mathematical fundamentals of 3D rendering and want to gain expertise in writing fast rendering engines with advanced techniques using C++ libraries and APIs. A solid understanding of C++ and basic linear algebra, as well as experience in creating custom 3D applications without using premade rendering engines is required.
+
+With the following software and hardware list you can run all code files present in the book (Chapter 1-10).
+
+
 Downloading assets and dependencies:
 ------------------------------------
 
