@@ -6,7 +6,8 @@ by Sergey Kosarevsky & Viktor Latypov
 
 <a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png" alt="Book Name" height="256px" align="right"></a>
 
-This is the code repository for [3D Graphics Rendering Cookbook](https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197), published by Packt.
+This is the code repository for [3D Graphics Rendering Cookbook](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629), published by Packt.
+
 
 
 ## What is this book about?
@@ -15,22 +16,15 @@ OpenGL is a popular cross-language, cross-platform application programming inter
 This book covers the following exciting features:
 
 * Improve the performance of legacy OpenGL applications
-
 * Manage a substantial amount of content in real-time 3D rendering engines
-
 * Discover how to debug and profile graphics applications
-
 * Understand how to use the Approaching Zero Driver Overhead (AZDO) philosophy in OpenGL
-
 * Integrate various rendering techniques into a single application
-
 * Find out how to develop Vulkan applications
-
 * Implement a physically based rendering pipeline from scratch
-
 * Integrate a physics library with your rendering engine
 
-If you feel this book is for you, get your [copy](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629) today!
+If you feel this book is for you, get your [copy](https://www.amazon.com/Graphics-Rendering-Cookbook-comprehensive-algorithms/dp/1838986197) today!
 
 <a href="https://www.packtpub.com/?utm_source=github&utm_medium=banner&utm_campaign=GitHubBanner"><img src="https://raw.githubusercontent.com/PacktPublishing/GitHub/master/GitHub.png" 
 alt="https://www.packtpub.com/" border="5" /></a>
@@ -313,7 +307,3 @@ Together with Sergey, he has co-authored two books on mobile software developmen
 [Android NDK Game Development Cookbook](https://www.packtpub.com/product/android-ndk-game-development-cookbook/9781782167785?utm_source=github&utm_medium=repository&utm_campaign=9781782167785)
 
 [Mastering Android NDK](https://www.packtpub.com/product/mastering-android-ndk/9781785288333?utm_source=github&utm_medium=repository&utm_campaign=9781785288333)
-
-
-### Suggestions and Feedback
-[Click here](https://docs.google.com/forms/d/e/1FAIpQLSdy7dATC6QmEL81FIUuymZ0Wy9vH1jHkvpY57OiMeKGqib_Ow/viewform) if you have any feedback or suggestions.
