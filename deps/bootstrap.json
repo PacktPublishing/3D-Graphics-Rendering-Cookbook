@@ -161,35 +161,40 @@
     "name": "bistro/PropTextures",
     "source": {
         "type": "archive",
-        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/PropTextures"
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/PropTextures",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
     }
 },
 {
     "name": "bistro/OtherTextures",
     "source": {
         "type": "archive",
-        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/OtherTextures"
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/OtherTextures",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
     }
 },
 {
     "name": "bistro/BuildingTextures",
     "source": {
         "type": "archive",
-        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/BuildingTextures"
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/BuildingTextures",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
     }
 },
 {
     "name": "bistro/Interior",
     "source": {
         "type": "archive",
-        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Interior.zip"
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Interior.zip",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
     }
 },
 {
     "name": "bistro/Exterior",
     "source": {
         "type": "archive",
-        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Exterior.zip"
+        "url": "https://casual-effects.com/g3d/data10/research/model/bistro/Exterior.zip",
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.116 Safari/537.36"
     }
 },
 {
