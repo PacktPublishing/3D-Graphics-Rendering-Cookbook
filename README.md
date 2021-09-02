@@ -60,6 +60,8 @@ Downloading assets and dependencies:
 
 Run the `bootstrap.py` script from the root folder of this repository. Make sure you have ~15Gb of free space before you download the assets and build the source code.
 
+Models downloaded from Morgan McGuire's [Computer Graphics Archive](https://casual-effects.com/data)
+
 Windows build instructions:
 ---------------------------
 
