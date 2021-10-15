@@ -14,7 +14,10 @@ import json
 import getopt
 import traceback
 import urllib
+import ssl
 #import progressbar
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 try:
     from urllib.request import urlparse
