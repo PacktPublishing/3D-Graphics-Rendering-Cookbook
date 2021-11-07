@@ -322,4 +322,4 @@ Together with Sergey, he has co-authored two books on mobile software developmen
 ## Other books by the authors
 [Android NDK Game Development Cookbook](https://www.packtpub.com/product/android-ndk-game-development-cookbook/9781782167785?utm_source=github&utm_medium=repository&utm_campaign=9781782167785)
 
-[Mastering Android NDK](https://www.packtpub.com/product/mastering-android-ndk/9781785288333?utm_source=github&utm_medium=repository&utm_campaign=9781785288333)
+[Mastering Android NDK](https://www.amazon.com/Mastering-Android-NDK-Sergey-Kosarevsky-ebook/dp/B0151N0GAO)
