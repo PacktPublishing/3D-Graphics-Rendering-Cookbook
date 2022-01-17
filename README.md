@@ -2,7 +2,7 @@
 
 **A comprehensive guide to exploring rendering algorithms in modern OpenGL and Vulkan**
 
-by Sergey Kosarevsky & Viktor Latypov
+by <a href="https://github.com/corporateshark">Sergey Kosarevsky</a> & <a href="https://github.com/LLViktor">Viktor Latypov</a>
 
 <a href="https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629"><img src="https://user-images.githubusercontent.com/2510143/124914444-05144f80-dff9-11eb-8753-62667b6543ca.png" alt="Book Name" height="256px" align="right"></a>
 
