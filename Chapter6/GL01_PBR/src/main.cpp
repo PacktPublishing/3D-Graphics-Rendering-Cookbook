@@ -144,7 +144,7 @@ int main(void)
 	glBindTextures(5, 2, envMaps);
 
 	// BRDF LUT
-	GLTexture brdfLUT(GL_TEXTURE_2D, "data/brdfLUT.ktx");
+	GLTexture brdfLUT(GL_TEXTURE_2D, "data/brdfLUT.ktx", GL_CLAMP_TO_EDGE);
 	glBindTextureUnit(7, brdfLUT.getHandle());
 
 	// model matrices

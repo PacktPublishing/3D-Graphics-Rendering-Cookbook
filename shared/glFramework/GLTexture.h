@@ -6,6 +6,7 @@ class GLTexture
 {
 public:
 	GLTexture(GLenum type, const char* fileName);
+	GLTexture(GLenum type, const char* fileName, GLenum clamp);
 	GLTexture(GLenum type, int width, int height, GLenum internalFormat);
 	GLTexture(int w, int h, const void* img);
 	~GLTexture();

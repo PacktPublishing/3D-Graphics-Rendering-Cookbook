@@ -58,6 +58,10 @@ uint8_t* genDefaultCheckerboardImage(int* width, int* height)
 }
 
 GLTexture::GLTexture(GLenum type, const char* fileName)
+: GLTexture(type, fileName, GL_REPEAT)
+{}
+
+GLTexture::GLTexture(GLenum type, const char* fileName, GLenum clamp)
 	: type_(type)
 {
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -65,6 +69,8 @@ GLTexture::GLTexture(GLenum type, const char* fileName)
 	glTextureParameteri(handle_, GL_TEXTURE_MAX_LEVEL, 0);
 	glTextureParameteri(handle_, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTextureParameteri(handle_, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(handle_, GL_TEXTURE_WRAP_S, clamp);
+	glTextureParameteri(handle_, GL_TEXTURE_WRAP_T, clamp);
 
 	const char* ext = strrchr(fileName, '.');
 
