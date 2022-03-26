@@ -96,8 +96,8 @@ vec2 BRDF(float NoV, float roughness)
 void main() 
 {
 	vec2 uv;
-	uv.x = float(gl_GlobalInvocationID.x) / float(BRDF_W);
-	uv.y = float(gl_GlobalInvocationID.y) / float(BRDF_H);
+	uv.x = (float(gl_GlobalInvocationID.x) + 0.5) / float(BRDF_W);
+	uv.y = (float(gl_GlobalInvocationID.y) + 0.5) / float(BRDF_H);
 
 	vec2 v = BRDF(uv.x, 1.0 - uv.y);
 
