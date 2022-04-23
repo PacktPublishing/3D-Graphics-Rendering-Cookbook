@@ -97,7 +97,7 @@ VulkanTexture VulkanResources::loadKTX(const char* fileName)
 	}
 
 	createImageView(vkDev.device, ktx.image.image, VK_FORMAT_R16G16_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &ktx.image.imageView);
-	createTextureSampler(vkDev.device, &ktx.sampler);
+	createTextureSampler(vkDev.device, &ktx.sampler, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 
 	allTextures.push_back(ktx);
 

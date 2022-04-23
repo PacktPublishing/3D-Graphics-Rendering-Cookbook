@@ -165,7 +165,7 @@ PBRModelRenderer::PBRModelRenderer(VulkanRenderDevice& vkDev,
 	}
 
 	createImageView(vkDev.device, brdfLUT_.image.image, VK_FORMAT_R16G16_SFLOAT, VK_IMAGE_ASPECT_COLOR_BIT, &brdfLUT_.image.imageView);
-	createTextureSampler(vkDev.device, &brdfLUT_.sampler);
+	createTextureSampler(vkDev.device, &brdfLUT_.sampler, VK_FILTER_LINEAR, VK_FILTER_LINEAR, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE);
 
 	if (	!createColorAndDepthRenderPass(vkDev, true, &renderPass_, RenderPassCreateInfo()) ||
 		!createUniformBuffers(vkDev, uniformBufferSize) ||
