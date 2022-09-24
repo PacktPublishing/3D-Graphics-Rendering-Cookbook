@@ -102,7 +102,7 @@ void MultiMeshRenderer::updateCountBuffer(VulkanRenderDevice& vkDev, size_t curr
 void MultiMeshRenderer::updateIndirectBuffers(VulkanRenderDevice& vkDev, size_t currentImage, bool* visibility)
 {
 	VkDrawIndirectCommand* data = nullptr;
-	vkMapMemory(vkDev.device, indirectBuffersMemory_[currentImage], 0, 2 * sizeof(VkDrawIndirectCommand), 0, (void **)&data);
+	vkMapMemory(vkDev.device, indirectBuffersMemory_[currentImage], 0, maxShapes_ * sizeof(VkDrawIndirectCommand), 0, (void**)&data);
 
 	for (uint32_t i = 0 ; i < maxShapes_ ; i++)
 	{
