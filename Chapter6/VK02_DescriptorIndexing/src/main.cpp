@@ -33,7 +33,7 @@ void updateAnimations()
 	for (size_t i = 0; i < animations.size();)
 	{
 		animations[i].textureIndex = animations[i].flipbookOffset + (uint32_t)(kAnimationFPS * ((glfwGetTime() - animations[i].startTime)));
-		if (animations[i].textureIndex - animations[i].flipbookOffset > kNumFlipbookFrames)
+		if (animations[i].textureIndex - animations[i].flipbookOffset > (kNumFlipbookFrames - 1))
 			animations.erase(animations.begin() + i);
 		else
 			i++;
