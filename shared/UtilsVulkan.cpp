@@ -2408,7 +2408,7 @@ bool createTexturedVertexBuffer(VulkanRenderDevice& vkDev, const char* filename,
 	{
 		const aiVector3D v = mesh->mVertices[i];
 		const aiVector3D t = mesh->mTextureCoords[0][i];
-		vertices.push_back({ .pos = vec3(v.x, v.z, v.y), .tc = vec2(t.x, t.y) });
+		vertices.push_back({ .pos = vec3(v.x, v.z, v.y), .tc = vec2(t.x, 1.0f-t.y) });
 	}
 
 	std::vector<unsigned int> indices;
