@@ -6,6 +6,7 @@
 #include <memory>
 #include <map>
 #include <utility>
+#include <string>
 
 /**
 	For more or less abstract descriptor set setup we need to describe individual items ("bindings").
