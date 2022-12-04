@@ -313,7 +313,8 @@ ImGuiRenderer::ImGuiRenderer(VulkanRenderDevice& vkDev)
 		!createDescriptorSet(vkDev) ||
 		!createPipelineLayout(vkDev.device, descriptorSetLayout_, &pipelineLayout_) ||
 		!createGraphicsPipeline(vkDev, renderPass_, pipelineLayout_,
-			{ "data/shaders/chapter04/imgui.vert", "data/shaders/chapter04/imgui.frag" }, &graphicsPipeline_, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+			{ "data/shaders/chapter07/VK02_ImGui.vert", "data/shaders/chapter07/VK02_ImGui.frag" },
+			 &graphicsPipeline_, VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
 			true, true, true))
 	{
 		printf("ImGuiRenderer: pipeline creation failed\n");
