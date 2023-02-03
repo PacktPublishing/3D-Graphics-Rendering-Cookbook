@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include "stb_image_resize.h"
+
 using glm::vec3;
 using glm::vec4;
 using glm::ivec2;
