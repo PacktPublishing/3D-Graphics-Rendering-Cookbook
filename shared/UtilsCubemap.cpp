@@ -1,6 +1,7 @@
 ﻿#include "UtilsMath.h"
 #include "UtilsCubemap.h"
 
+#include <cstdio>
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
