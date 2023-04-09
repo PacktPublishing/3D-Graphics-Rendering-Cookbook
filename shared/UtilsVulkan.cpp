@@ -170,7 +170,7 @@ static size_t compileShader(glslang_stage_t stage, const char* shaderSource, Sha
 		.force_default_version_and_profile = false,
 		.forward_compatible = false,
 		.messages = GLSLANG_MSG_DEFAULT_BIT,
-		.resource = (const glslang_resource_t*)&glslang::DefaultTBuiltInResource,
+		.resource = glslang_default_resource(),
 	};
 
 	glslang_shader_t* shader = glslang_shader_create(&input);
