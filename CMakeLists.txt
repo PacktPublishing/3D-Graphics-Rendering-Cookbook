@@ -135,7 +135,9 @@ set_property(TARGET SPVRemapper   PROPERTY FOLDER "ThirdPartyLibraries/glslang")
 # shared utils code for GL and Vulkan
 add_subdirectory(shared)
 
-target_sources(SharedUtils PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/deps/src/glslang/StandAlone/ResourceLimits.cpp)
+target_sources(SharedUtils PRIVATE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/src/glslang/StandAlone/ResourceLimits.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/deps/src/glslang/StandAlone/resource_limits_c.cpp)
 
 add_subdirectory(Chapter1/2_CMake)
 
