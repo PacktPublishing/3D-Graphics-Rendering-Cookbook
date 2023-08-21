@@ -36,6 +36,9 @@ vec4 gridColor(vec2 uv, vec2 camPos)
 	// each anti-aliased line covers up to 4 pixels
 	dudv *= 4.0;
 
+	// Update grid coordinates for subsequent alpha calculations (centers each anti-aliased line)
+  	uv = uv + dudv / 2.0F;
+
 	// calculate absolute distances to cell line centers for each lod and pick max X/Y to get coverage alpha value
 	float lod0a = max2( vec2(1.0) - abs(satv(mod(uv, lod0) / dudv) * 2.0 - vec2(1.0)) );
 	float lod1a = max2( vec2(1.0) - abs(satv(mod(uv, lod1) / dudv) * 2.0 - vec2(1.0)) );
