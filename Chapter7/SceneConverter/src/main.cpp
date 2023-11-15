@@ -22,7 +22,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 #include "stb_image.h"
-#include "stb_image_resize.h"
+#include "stb_image_resize2.h"
 
 #include <meshoptimizer.h>
 
@@ -482,7 +482,7 @@ std::string convertTexture(const std::string& file, const std::string& basePath,
 	const int newW = std::min(texWidth, maxNewWidth);
 	const int newH = std::min(texHeight, maxNewHeight);
 
-	stbir_resize_uint8(src, texWidth, texHeight, 0, dst, newW, newH, 0, texChannels);
+	stbir_resize_uint8_linear(src, texWidth, texHeight, 0, dst, newW, newH, 0, (stbir_pixel_layout)texChannels);
 
 	stbi_write_png(newFile.c_str(), newW, newH, texChannels, dst, 0);
 

@@ -6,7 +6,7 @@
 #include <glm/ext.hpp>
 
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
-#include "stb_image_resize.h"
+#include "stb_image_resize2.h"
 
 using glm::vec2;
 using glm::vec3;
@@ -42,10 +42,18 @@ void convolveDiffuse(const vec3* data, int srcW, int srcH, int dstW, int dstH, v
 
 	std::vector<vec3> tmp(dstW * dstH);
 
-	stbir_resize_float_generic(
-		reinterpret_cast<const float*>(data), srcW, srcH, 0,
-		reinterpret_cast<float*>(tmp.data()), dstW, dstH, 0, 3,
-		STBIR_ALPHA_CHANNEL_NONE, 0, STBIR_EDGE_CLAMP, STBIR_FILTER_CUBICBSPLINE, STBIR_COLORSPACE_LINEAR, nullptr);
+	stbir_resize(reinterpret_cast<const float*>(data),
+               srcW,
+               srcH,
+               0,
+               reinterpret_cast<float*>(tmp.data()),
+               dstW,
+               dstH,
+               0,
+               STBIR_RGB,
+               STBIR_TYPE_FLOAT,
+               STBIR_EDGE_CLAMP,
+               STBIR_FILTER_CUBICBSPLINE);
 
 	const vec3* scratch = tmp.data();
 	srcW = dstW;
