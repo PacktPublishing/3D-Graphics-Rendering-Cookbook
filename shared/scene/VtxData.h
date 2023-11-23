@@ -1,5 +1,6 @@
 #pragma once
 
+#include <assert.h>
 #include <stdint.h>
 
 #include <glm/glm.hpp>
@@ -30,7 +31,10 @@ struct Mesh final
 	/* Offsets to LOD data. Last offset is used as a marker to calculate the size */
 	uint32_t lodOffset[kMaxLODs] = { 0 };
 
-	inline uint32_t getLODIndicesCount(uint32_t lod) const { return lodOffset[lod + 1] - lodOffset[lod]; }
+	inline uint32_t getLODIndicesCount(uint32_t lod) const {
+		assert(lod + 1 < kMaxLODs);
+		return lodOffset[lod + 1] - lodOffset[lod];
+	}
 
 	/* All the data "pointers" for all the streams */
 	uint32_t streamOffset[kMaxStreams] = { 0 };

@@ -28,7 +28,7 @@ static uint32_t shiftMeshIndices(MeshData& meshData, const std::vector<uint32_t>
 		mergeCount += idxCount;
 	}
 
-	return meshData.indexData_.size() - mergeCount;
+	return uint32_t(meshData.indexData_.size()) - mergeCount;
 }
 
 // All the meshesToMerge now have the same vertexOffset and individual index values are shifted by appropriate amount
@@ -40,9 +40,9 @@ static void mergeIndexArray(MeshData& md, const std::vector<uint32_t>& meshesToM
 	uint32_t copyOffset = 0,
 	         mergeOffset = shiftMeshIndices(md, meshesToMerge);
 
-	const auto mergedMeshIndex = md.meshes_.size() - meshesToMerge.size();
-	auto newIndex = 0u;
-	for (auto midx = 0u ; midx < md.meshes_.size() ; midx++)
+	const uint32_t mergedMeshIndex = uint32_t(md.meshes_.size() - meshesToMerge.size());
+	uint32_t newIndex = 0u;
+	for (uint32_t midx = 0u ; midx < uint32_t(md.meshes_.size()) ; midx++)
 	{
 		const bool shouldMerge = std::binary_search( meshesToMerge.begin(), meshesToMerge.end(), midx);
 
@@ -102,7 +102,7 @@ void mergeScene(Scene& scene, MeshData& meshData, const std::string& materialNam
 
 	// reattach the node with merged meshes [identity transforms are assumed]
 	int newNode = addNode(scene, 0, 1);
-	scene.meshes_[newNode] = meshData.meshes_.size() - 1;
+	scene.meshes_[newNode] = uint32_t(meshData.meshes_.size() - 1);
 	scene.materialForNode_[newNode] = (uint32_t)oldMaterial;
 
 	deleteSceneNodes(scene, toDelete);
