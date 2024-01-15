@@ -32,9 +32,13 @@ void printShaderSource(const char* text)
 	printf("\n");
 }
 
-int endsWith(const char* s, const char* part)
+bool endsWith(const char* s, const char* part)
 {
-	return (strstr( s, part ) - s) == (strlen( s ) - strlen( part ));
+	const size_t sLength = strlen(s);
+	const size_t partLength = strlen(part);
+	if (sLength < partLength)
+		return false;
+	return strcmp(s + sLength - partLength, part) == 0;
 }
 
 std::string readShaderFile(const char* fileName)
