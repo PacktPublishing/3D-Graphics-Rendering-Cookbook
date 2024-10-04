@@ -29,10 +29,6 @@ if executeCommandSilent("git --version") != 0:
 	print( "Install Git first" )
 	exit(255)
 
-if executeCommandSilent("hg --version") != 0:
-	print( "Install Mercurial first" )
-	exit(255)
-
 # run Tools/Bootstrap
 
 runPythonScript( os.path.join("deps", "bootstrap.py"), "-b deps" )
