@@ -11,7 +11,7 @@ by <a href="https://github.com/corporateshark">Sergey Kosarevsky</a> & <a href="
 
 This is the code repository for [3D Graphics Rendering Cookbook](https://www.packtpub.com/game-development/3d-graphics-rendering-cookbook?utm_source=github&utm_medium=repository&utm_campaign=9781786461629), published by Packt in 2021.
 
-$\color{red}{\textsf{Check out the 2nd edition of this book:}}$ [Vulkan 3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook-Second-Edition/), 2025.
+$\color{red}{\textsf{Check out the 2nd edition:}}$ [Vulkan 3D Graphics Rendering Cookbook](https://github.com/PacktPublishing/3D-Graphics-Rendering-Cookbook-Second-Edition/), 2025.
 
 
 ## What is this book about?
