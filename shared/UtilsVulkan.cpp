@@ -4,7 +4,7 @@
 #include "shared/UtilsCubemap.h"
 #include "shared/EasyProfilerWrapper.h"
 
-#include "StandAlone/ResourceLimits.h"
+#include "Include/ResourceLimits.h"
 
 #define VK_NO_PROTOTYPES
 #define GLFW_INCLUDE_VULKAN

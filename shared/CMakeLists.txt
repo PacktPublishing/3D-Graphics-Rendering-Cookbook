@@ -24,3 +24,5 @@ endif()
 if(BUILD_WITH_OPTICK)
 	target_link_libraries(SharedUtils PUBLIC OptickCore)
 endif()
+
+target_include_directories(SharedUtils PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../deps/src/glslang/glslang)
