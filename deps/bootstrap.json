@@ -12,7 +12,7 @@
     "source": {
         "type": "git",
         "url": "https://github.com/glfw/glfw.git",
-        "revision": "3.3.4"
+        "revision": "3.4"
     }
 },
 {
