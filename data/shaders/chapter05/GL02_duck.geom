@@ -2,6 +2,9 @@
 #version 460 core
 
 layout( triangles ) in;
+
+in gl_PerVertex{vec4 gl_Position;}gl_in[];
+
 layout( triangle_strip, max_vertices = 3 ) out;
 
 layout (location=0) in vec2 uv[];

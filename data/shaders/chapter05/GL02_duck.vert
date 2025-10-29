@@ -35,6 +35,8 @@ vec2 getTexCoord(int i)
 	return vec2(in_Vertices[i].tc[0], in_Vertices[i].tc[1]);
 }
 
+out gl_PerVertex{vec4 gl_Position;};
+
 layout (location=0) out vec2 uv_in;
 layout (location=1) out vec3 worldPos_in;
 
