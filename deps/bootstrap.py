@@ -1,12 +1,33 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
-from __future__ import print_function
+#
+# https://github.com/corporateshark/bootstrapping.git
+# sk@linderdaum.com
+#
+# The MIT License (MIT)
+# Copyright (c) 2016-2026, Sergey Kosarevsky
+#
+# ---
+# Based on https://bitbucket.org/blippar/bootstrapping-external-libs
+#
+# The MIT License (MIT)
+# Copyright (c) 2016 Blippar.com Ltd
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+BOOTSTRAP_VERSION = "1.0.8 (2026)"
+
 import platform
 import os
 import sys
 import io
 import shutil
 import subprocess
+import tempfile
 import zipfile
 import tarfile
 import hashlib
@@ -14,22 +35,12 @@ import json
 import getopt
 import traceback
 import urllib
+import urllib.request
 import ssl
-#import progressbar
+import ctypes
+from urllib.parse import urlparse, urlunparse, quote
 
 ssl._create_default_https_context = ssl._create_unverified_context
-
-try:
-    from urllib.request import urlparse
-    from urllib.request import urlunparse
-    from urllib.request import urlretrieve
-    from urllib.request import quote
-except ImportError:
-    from urlparse import urlparse
-    from urlparse import urlunparse
-    from urllib import urlretrieve
-    from urllib import URLopener
-    from urllib import quote
 
 try:
     import paramiko
@@ -37,7 +48,6 @@ try:
     scp_available = True
 except:
     scp_available = False
-    print("WARNING: Please install the Python packages [paramiko, scp] for full script operation.")
 
 try:
     import lzma
@@ -50,6 +60,11 @@ except:
     print("> brew install xz")
     print("> pip install pyliblzma")
     lzma_available = False
+
+class Colors:
+    GREEN = '\033[92m'
+    WARNING = '\033[91m'
+    NORMAL = '\033[0m'
 
 SRC_DIR_BASE = "src"
 ARCHIVE_DIR_BASE = "archives"
@@ -67,7 +82,7 @@ FALLBACK_URL = ""
 USE_TAR = False
 USE_UNZIP = False
 
-TOOL_COMMAND_PYTHON = "python"
+TOOL_COMMAND_PYTHON = sys.executable if not " " in sys.executable else '"{}"'.format(sys.executable)
 TOOL_COMMAND_GIT = "git"
 TOOL_COMMAND_HG = "hg"
 TOOL_COMMAND_SVN = "svn"
@@ -75,15 +90,30 @@ TOOL_COMMAND_PATCH = "patch"
 TOOL_COMMAND_TAR = "tar"
 TOOL_COMMAND_UNZIP = "unzip"
 
+ansi_console = True
+
 if platform.system() == "Windows":
     os.environ['CYGWIN'] = "nodosfilewarning"
+    ansi_console = False
+    if sys.getwindowsversion().major >= 10:
+        ansi_console = True
+        kernel32 = ctypes.windll.kernel32
+        handle = kernel32.GetStdHandle(-11)
+        mode = ctypes.c_uint32()
+        kernel32.GetConsoleMode(handle, ctypes.byref(mode))
+        kernel32.SetConsoleMode(handle, mode.value | 0x0004)
 
-if platform.system() == "Linux":
-    TOOL_COMMAND_PYTHON = "python3"
+if sys.version_info < (3, 5):
+    raise ValueError("I require Python 3.5 or a later version")
 
 def log(string):
     print("--- " + string)
 
+def warning(string):
+    if ansi_console:
+      print(Colors.WARNING, "--- " + string, Colors.NORMAL)
+    else:
+      print("--- " + string)
 
 def dlog(string):
     if DEBUG_OUTPUT:
@@ -119,7 +149,7 @@ def escapifyPath(path):
         return "\"" + path + "\""
     return path.replace("\\ ", " ")
 
-def cloneRepository(type, url, target_name, revision = None, try_only_local_operations = False):
+def cloneRepository(type, url, target_name, revision, try_only_local_operations = False, recursive = True):
     target_dir = escapifyPath(os.path.join(SRC_DIR, target_name))
     target_dir_exists = os.path.exists(target_dir)
     log("Cloning " + url + " to " + target_dir)
@@ -152,10 +182,16 @@ def cloneRepository(type, url, target_name, revision = None, try_only_local_oper
             if target_dir_exists:
                 dlog("Removing directory " + target_dir + " before cloning")
                 shutil.rmtree(target_dir)
-            dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " clone --recursive " + url + " " + target_dir))
+            if recursive:
+                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " clone --recursive " + url + " " + target_dir))
+            else:
+                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " clone " + url + " " + target_dir))
         elif not try_only_local_operations:
             log("Repository " + target_dir + " already exists; fetching instead of cloning")
-            dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " fetch --recurse-submodules"))
+            if recursive:
+                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " fetch --recurse-submodules"))
+            else:
+                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " fetch"))
 
         if revision is None:
             revision = "HEAD"
@@ -182,17 +218,16 @@ def decompressTarXZFile(src_filename, dst_filename):
 
     try:
         fs = open(src_filename, "rb")
-        if not fs:
-            raise RuntimeError("Opening file " + src_filename + " failed")
+    except:
+        raise RuntimeError("Opening file " + src_filename + " failed")
+    try:
         fd = open(dst_filename, "wb")
-        if not fd:
-            raise RuntimeError("Opening file " + dst_filename + " failed")
-
+    except:
+        fs.close()
+        raise RuntimeError("Opening file " + dst_filename + " failed")
+    with fs, fd:
         decompressed = lzma.decompress(fs.read())
         fd.write(decompressed)
-    finally:
-        fs.close()
-        fd.close()
 
 
 
@@ -204,7 +239,17 @@ def extractFile(filename, target_dir):
     stem, extension = os.path.splitext(os.path.basename(filename))
 
     if extension == ".zip" or extension == "":
-        zfile = zipfile.ZipFile(filename)
+        zfile = None
+        try:
+            zfile = zipfile.ZipFile(filename)
+        except zipfile.BadZipFile:
+            warning("WARNING: Invalid ZIP file '" + filename + "'")
+            if os.path.exists(filename) and os.path.getsize(filename) == 0:
+                warning("WARNING: Zero-sized file was deleted. Run the script again.")
+                os.remove(filename)
+            else:
+                warning("WARNING: Try deleting the cached file and run the script again.")
+            raise RuntimeError("Invalid ZIP file '" + filename + "'") from None
         extract_dir = os.path.commonprefix(zfile.namelist())
         hasFolder = False
         for fname in zfile.namelist():
@@ -219,7 +264,7 @@ def extractFile(filename, target_dir):
         extract_dir_abs = os.path.join(SRC_DIR, extract_dir_local)
 
         try:
-            os.mkdirs(extract_dir_abs)
+            os.makedirs(extract_dir_abs, exist_ok=True)
         except:
             pass
 
@@ -251,7 +296,7 @@ def extractFile(filename, target_dir):
         extract_dir_abs = os.path.join(SRC_DIR, extract_dir_local)
 
         try:
-            os.mkdirs(extract_dir_abs)
+            os.makedirs(extract_dir_abs, exist_ok=True)
         except:
             pass
 
@@ -297,7 +342,7 @@ def createArchiveFromDirectory(src_dir_name, archive_name, delete_existing_archi
 
 def downloadSCP(hostname, username, path, target_dir):
     if not scp_available:
-        log("ERROR: missing Python packages [paramiko, scp]; cannot continue.")
+        warning("ERROR: missing Python packages [paramiko, scp]; cannot continue.")
         raise RuntimeError("Missing Python packages [paramiko, scp]; cannot continue.")
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
@@ -305,14 +350,15 @@ def downloadSCP(hostname, username, path, target_dir):
     scpc = scp.SCPClient(ssh.get_transport())
     scpc.get(path, local_path = target_dir);
 
-
-# def downloadProgress(count, block_size, total_size):
-#     global pbar
-#     if count == 0:
-#         pbar = progressbar.ProgressBar(maxval = total_size / block_size)
-#     else:
-#         pbar.update(count - 1)
-
+def downloadProgress(cur_size, total_size):
+    percent = int((cur_size / total_size)*100)
+    print("[", end = "")
+    for i in range(int(percent/2)):
+        print("*", end = "")
+    for i in range(int(percent/2), 50):
+        print(".", end = "")
+    print("] " + str(percent) + "% --- ", end = "")
+    print("%.2f" % (cur_size / (1024*1024)), "Mb", end = "\r")
 
 def computeFileHash(filename):
     blocksize = 65536
@@ -347,14 +393,36 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
         if p.scheme == "ssh":
             downloadSCP(p.hostname, p.username, p.path, download_dir)
         else:
+            opener = urllib.request.build_opener()
             if user_agent is not None:
-                opener = urllib.request.build_opener()
                 opener.addheaders = [('User-agent', user_agent)]
-                f = open(target_filename, 'wb')
-                f.write(opener.open(url).read())
-                f.close()
-            else:
-                urlretrieve(url, target_filename)
+            # download to a temporary file first, so a failed download doesn't leave a partial file behind
+            fd, tmp_filename = tempfile.mkstemp(dir=download_dir)
+            try:
+                with os.fdopen(fd, 'wb') as f:
+                    with opener.open(url) as response:
+                        Length = response.getheader('content-length')
+                        BlockSize = 128*1024 # default value
+                        if Length:
+                            Length = int(Length)
+                            BlockSize = max(BlockSize, Length // 1000)
+                            Size = 0
+                            while True:
+                                Buffer = response.read(BlockSize)
+                                if not Buffer:
+                                    break
+                                f.write(Buffer)
+                                Size += len(Buffer)
+                                downloadProgress(Size, Length)
+                            print();
+                        else:
+                            f.write(response.read())
+                os.replace(tmp_filename, target_filename)
+            except:
+                # clean up the partial download
+                if os.path.exists(tmp_filename):
+                    os.remove(tmp_filename)
+                raise
     else:
         log("Skipping download of " + url + "; already downloaded")
 
@@ -362,7 +430,9 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
     if sha1_hash is not None and sha1_hash != "":
         hash_file = computeFileHash(target_filename)
         if hash_file != sha1_hash:
-            raise RuntimeError("Hash of " + target_filename + " (" + hash_file + ") differs from expected hash (" + sha1_hash + ")")
+            errorStr = "Hash of " + target_filename + " (" + hash_file + ") differs from expected hash (" + sha1_hash + ")"
+            log(errorStr)
+            raise RuntimeError(errorStr)
 
     return target_filename
 
@@ -385,9 +455,9 @@ def applyPatchFile(patch_name, dir_name, pnum):
         arguments = argumentsBinary
         res = executeCommand(TOOL_COMMAND_PATCH + " --dry-run " + arguments, quiet = True)
     if res != 0:
-        log("ERROR: patch application failure; has this patch already been applied?")
+        warning("ERROR: patch application failure; has this patch already been applied?")
         executeCommand(TOOL_COMMAND_PATCH + " --dry-run " + arguments, printCommand = True)
-        exit(255)
+        raise RuntimeError("Patch application failure for " + patch_name)
     else:
         dieIfNonZero(executeCommand(TOOL_COMMAND_PATCH + " " + arguments, quiet = True))
 
@@ -396,7 +466,7 @@ def runPythonScript(script_name):
     log("Running Python script " + script_name)
     patch_dir = os.path.join(BASE_DIR, "patches")
     filename = os.path.join(patch_dir, script_name)
-    dieIfNonZero(executeCommand(TOOL_COMMAND_PYTHON + " " + filename, False));
+    dieIfNonZero(executeCommand(TOOL_COMMAND_PYTHON + " " + escapifyPath(filename), False));
 
 
 def findToolCommand(command, paths_to_search, required = False):
@@ -411,7 +481,7 @@ def findToolCommand(command, paths_to_search, required = False):
             break;
 
     if required and not found:
-        log("WARNING: command " + command + " not found, but required by script")
+        warning("WARNING: command " + command + " not found, but required by script")
 
     dlog("Found '" + command + "' as " + command_res)
     return command_res
@@ -421,13 +491,16 @@ def readJSONData(filename):
     try:
         json_data = open(filename).read()
     except:
-        log("ERROR: Could not read JSON file " + filename)
+        warning("ERROR: Could not read JSON file: " + filename)
         return None
 
     try:
         data = json.loads(json_data)
+    except json.JSONDecodeError as e:
+        warning("ERROR: Could not parse JSON document: {}\n    {} (line {}:{})\n".format(filename, e.msg, e.lineno, e.colno))
+        return None
     except:
-        log("ERROR: Could not parse JSON document")
+        warning("ERROR: Could not parse JSON document: " + filename)
         return None
 
     return data
@@ -446,6 +519,8 @@ def listLibraries(data):
 
 
 def printOptions():
+        print("--------------------------------------------------------------------------------")
+        print(BOOTSTRAP_VERSION)
         print("--------------------------------------------------------------------------------")
         print("Downloads external libraries, and applies patches or scripts if necessary.")
         print("If the --name argument is not provided, all available libraries will be")
@@ -486,6 +561,7 @@ def printOptions():
         print("                          sources")
         print("  --debug-output          Enables extra debugging output")
         print("  --break-on-first-error  Terminate script once the first error is encountered")
+        print("  --version               Print the script version")
         print("--------------------------------------------------------------------------------")
 
 
@@ -499,7 +575,7 @@ def main(argv):
             "ln:N:cCb:h",
             ["list", "name=", "name-file=", "skip=", "clean", "clean-all", "base-dir", "bootstrap-file=",
              "local-bootstrap-file=", "use-tar", "use-unzip", "repo-snapshots", "fallback-url=",
-             "force-fallback", "debug-output", "help", "break-on-first-error"])
+             "force-fallback", "debug-output", "help", "break-on-first-error", "version"])
     except getopt.GetoptError:
         printOptions()
         return 0
@@ -523,6 +599,9 @@ def main(argv):
     for opt, arg in opts:
         if opt in ("-h", "--help"):
             printOptions()
+            return 0
+        if opt in ("--version"):
+            print(BOOTSTRAP_VERSION)
             return 0
         if opt in ("-l", "--list"):
             list_libraries = True
@@ -573,8 +652,8 @@ def main(argv):
         paths_to_search = os.environ["PATH"].split(":") + ["/usr/local/bin", "/opt/local/bin", "/usr/bin"]
         TOOL_COMMAND_PYTHON = findToolCommand(TOOL_COMMAND_PYTHON, paths_to_search, required = True)
         TOOL_COMMAND_GIT = findToolCommand(TOOL_COMMAND_GIT, paths_to_search, required = True)
-        TOOL_COMMAND_HG = findToolCommand(TOOL_COMMAND_HG, paths_to_search, required = True)
-        TOOL_COMMAND_SVN = findToolCommand(TOOL_COMMAND_SVN, paths_to_search, required = True)
+        TOOL_COMMAND_HG = findToolCommand(TOOL_COMMAND_HG, paths_to_search, required = False)
+        TOOL_COMMAND_SVN = findToolCommand(TOOL_COMMAND_SVN, paths_to_search, required = False)
         TOOL_COMMAND_PATCH = findToolCommand(TOOL_COMMAND_PATCH, paths_to_search, required = True)
         TOOL_COMMAND_TAR = findToolCommand(TOOL_COMMAND_TAR, paths_to_search, required = USE_TAR)
         TOOL_COMMAND_UNZIP = findToolCommand(TOOL_COMMAND_UNZIP, paths_to_search, required = USE_UNZIP)
@@ -591,11 +670,11 @@ def main(argv):
                     opt_names += opt_names_local
                     dlog("Name file contains: " + ", ".join(opt_names_local))
             except:
-                log("ERROR: cannot parse name file " + name_file)
+                warning("ERROR: cannot parse name file '" + name_file + "'")
                 return -1
 
     if force_fallback and not FALLBACK_URL:
-        log("Error: cannot force usage of the fallback location without specifying a fallback URL")
+        warning("Error: cannot force usage of the fallback location without specifying a fallback URL")
         return -1;
 
     state_filename = os.path.join(os.path.dirname(os.path.splitext(bootstrap_filename)[0]), \
@@ -613,7 +692,7 @@ def main(argv):
     # some sanity checking
     for library in data:
         if library.get('name', None) is None:
-            log("ERROR: Invalid schema: library object does not have a 'name'")
+            warning("ERROR: Invalid schema: library object does not have a 'name'")
             return -1
 
     # read local libraries data, if available
@@ -627,7 +706,7 @@ def main(argv):
         # some sanity checking
         for local_library in local_data:
             if local_library.get('name', None) is None:
-                log("ERROR: Invalid schema: local library object does not have a 'name'")
+                warning("ERROR: Invalid schema: local library object does not have a 'name'")
                 return -1
 
     # merge canonical and local library data, if applicable; local libraries take precedence
@@ -667,12 +746,19 @@ def main(argv):
         name = library.get('name', None)
         source = library.get('source', None)
         post = library.get('postprocess', None)
+        predicate = library.get('predicate', None)
 
         if (skip_libs) and (name in skip_libs):
             continue
 
         if (opt_names) and (not name in opt_names):
             continue
+
+        if predicate is not None:
+            log("Running predicate code for '" + name + "'")
+            if eval(predicate) is not True:
+                log("Predicate is not True for '" + name + "'; skipping library")
+                continue
 
         lib_dir = os.path.join(SRC_DIR, name)
         lib_dir = lib_dir.replace(os.path.sep, '/')
@@ -690,7 +776,7 @@ def main(argv):
                     break
 
         if cached_state_ok:
-            log("Cached state for " + name + " equals expected state; skipping library")
+            log("Cached state for '" + name + "' equals expected state; skipping library")
             continue
         else:
             # remove cached state for library
@@ -708,10 +794,10 @@ def main(argv):
             # download source
             if source is not None:
                 if 'type' not in source:
-                    log("ERROR: Invalid schema for " + name + ": 'source' object must have a 'type'")
+                    warning("ERROR: Invalid schema for '" + name + "': 'source' object must have a 'type'")
                     return -1
                 if 'url' not in source:
-                    log("ERROR: Invalid schema for " + name + ": 'source' object must have a 'url'")
+                    warning("ERROR: Invalid schema for '" + name + "': 'source' object must have a 'url'")
                     return -1
                 src_type = source['type']
                 src_url = source['url']
@@ -761,6 +847,7 @@ def main(argv):
 
                 else:
                     revision = source.get('revision', None)
+                    recursive = source.get('recursive', True)
 
                     archive_name = name + ".tar.gz" # for reading or writing of snapshot archives
                     if revision is not None:
@@ -769,10 +856,10 @@ def main(argv):
                     try:
                         if force_fallback:
                             raise RuntimeError
-                        cloneRepository(src_type, src_url, name, revision)
+                        cloneRepository(src_type, src_url, name, revision, False, recursive)
 
                         if create_repo_snapshots:
-                            log("Creating snapshot of library repository " + name)
+                            log("Creating snapshot of library repository '" + name + "'")
                             repo_dir = os.path.join(SRC_DIR, name)
                             archive_filename = os.path.join(SNAPSHOT_DIR, archive_name)
 
@@ -793,7 +880,7 @@ def main(argv):
                             downloadAndExtractFile(fallback_src_url, SNAPSHOT_DIR, name, force_download = True)
 
                             # reset repository state to particular revision (only using local operations inside the function)
-                            cloneRepository(src_type, src_url, name, revision, True)
+                            cloneRepository(src_type, src_url, name, revision, True, True)
                         else:
                             raise
             else:
@@ -804,10 +891,10 @@ def main(argv):
             # post-processing
             if post is not None:
                 if 'type' not in post:
-                    log("ERROR: Invalid schema for " + name + ": 'postprocess' object must have a 'type'")
+                    warning("ERROR: Invalid schema for '" + name + "': 'postprocess' object must have a 'type'")
                     return -1
                 if 'file' not in post:
-                    log("ERROR: Invalid schema for " + name + ": 'postprocess' object must have a 'file'")
+                    warning("ERROR: Invalid schema for '" + name + "': 'postprocess' object must have a 'file'")
                     return -1
                 post_type = post['type']
                 post_file = post['file']
@@ -817,7 +904,7 @@ def main(argv):
                 elif post_type == "script":
                     runPythonScript(post_file)
                 else:
-                    log("ERROR: Unknown post-processing type '" + post_type + "' for " + name)
+                    warning("ERROR: Unknown post-processing type '" + post_type + "' for " + name)
                     return -1
 
             # add to cached state
@@ -826,26 +913,29 @@ def main(argv):
             # write out cached state
             writeJSONData(sdata, state_filename)
         except urllib.error.URLError as e:
-            log("ERROR: Failure to bootstrap library " + name + " (urllib.error.URLError: reason " + str(e.reason) + ")")
+            warning("ERROR: Failure to bootstrap library '" + name + "' (urllib.error.URLError: reason " + str(e.reason) + ")")
             if break_on_first_error:
                 exit(-1)
             traceback.print_exc()
             failed_libraries.append(name)
         except:
-            log("ERROR: Failure to bootstrap library " + name + " (reason: " + str(sys.exc_info()[0]) + ")")
+            warning("ERROR: Failure to bootstrap library '" + name + "' (reason: " + str(sys.exc_info()[0]) + ")")
             if break_on_first_error:
                 exit(-1)
             traceback.print_exc()
             failed_libraries.append(name)
 
     if failed_libraries:
-        log("***************************************")
-        log("FAILURE to bootstrap the following libraries:")
-        log(', '.join(failed_libraries))
-        log("***************************************")
+        warning("***************************************")
+        warning("FAILURE to bootstrap the following libraries:")
+        warning(', '.join(failed_libraries))
+        warning("***************************************")
         return -1
 
     log("Finished")
+
+    # touch the state cache file
+    os.utime(state_filename, None);
 
     return 0
 
