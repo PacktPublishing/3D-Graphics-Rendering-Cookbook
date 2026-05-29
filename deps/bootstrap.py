@@ -82,7 +82,7 @@ FALLBACK_URL = ""
 USE_TAR = False
 USE_UNZIP = False
 
-TOOL_COMMAND_PYTHON = sys.executable if not " " in sys.executable else '"{}"'.format(sys.executable)
+TOOL_COMMAND_PYTHON = sys.executable if not " " in sys.executable else f'"{sys.executable}"'
 TOOL_COMMAND_GIT = "git"
 TOOL_COMMAND_HG = "hg"
 TOOL_COMMAND_SVN = "svn"
@@ -103,21 +103,21 @@ if platform.system() == "Windows":
         kernel32.GetConsoleMode(handle, ctypes.byref(mode))
         kernel32.SetConsoleMode(handle, mode.value | 0x0004)
 
-if sys.version_info < (3, 5):
-    raise ValueError("I require Python 3.5 or a later version")
+if sys.version_info < (3, 6):
+    raise ValueError("I require Python 3.6 or a later version")
 
 def log(string):
-    print("--- " + string)
+    print(f"--- {string}")
 
 def warning(string):
     if ansi_console:
-      print(Colors.WARNING, "--- " + string, Colors.NORMAL)
+      print(Colors.WARNING, f"--- {string}", Colors.NORMAL)
     else:
-      print("--- " + string)
+      print(f"--- {string}")
 
 def dlog(string):
     if DEBUG_OUTPUT:
-        print("*** " + string)
+        print(f"*** {string}")
 
 def executeCommand(command, printCommand = False, quiet = False):
 
@@ -131,85 +131,85 @@ def executeCommand(command, printCommand = False, quiet = False):
 
     if printCommand:
         if DEBUG_OUTPUT:
-            dlog(">>> " + command)
+            dlog(f">>> {command}")
         else:
-            log(">>> " + command)
+            log(f">>> {command}")
 
-    return subprocess.call(command, shell = True, stdout=out, stderr=err);
+    return subprocess.call(command, shell = True, stdout=out, stderr=err)
 
 
 def dieIfNonZero(res):
     if res != 0:
-        raise ValueError("Command returned non-zero status: " + str(res));
+        raise ValueError(f"Command returned non-zero status: {res}")
 
 def escapifyPath(path):
     if path.find(" ") == -1:
         return path
     if platform.system() == "Windows":
-        return "\"" + path + "\""
+        return f'"{path}"'
     return path.replace("\\ ", " ")
 
 def cloneRepository(type, url, target_name, revision, try_only_local_operations = False, recursive = True):
     target_dir = escapifyPath(os.path.join(SRC_DIR, target_name))
     target_dir_exists = os.path.exists(target_dir)
-    log("Cloning " + url + " to " + target_dir)
+    log(f"Cloning {url} to {target_dir}")
 
     if type == "hg":
         repo_exists = os.path.exists(os.path.join(target_dir, ".hg"))
 
         if not repo_exists:
             if try_only_local_operations:
-                raise RuntimeError("Repository for " + target_name + " not found; cannot execute local operations only")
+                raise RuntimeError(f"Repository for {target_name} not found; cannot execute local operations only")
             if target_dir_exists:
-                dlog("Removing directory " + target_dir + " before cloning")
+                dlog(f"Removing directory {target_dir} before cloning")
                 shutil.rmtree(target_dir)
-            dieIfNonZero(executeCommand(TOOL_COMMAND_HG + " clone " + url + " " + target_dir))
+            dieIfNonZero(executeCommand(f"{TOOL_COMMAND_HG} clone {url} {target_dir}"))
         elif not try_only_local_operations:
-            log("Repository " + target_dir + " already exists; pulling instead of cloning")
-            dieIfNonZero(executeCommand(TOOL_COMMAND_HG + " pull -R " + target_dir))
+            log(f"Repository {target_dir} already exists; pulling instead of cloning")
+            dieIfNonZero(executeCommand(f"{TOOL_COMMAND_HG} pull -R {target_dir}"))
 
         if revision is None:
             revision = ""
-        dieIfNonZero(executeCommand(TOOL_COMMAND_HG + " update -R " + target_dir + " -C " + revision))
-        dieIfNonZero(executeCommand(TOOL_COMMAND_HG + " purge -R " + target_dir + " --config extensions.purge="))
+        dieIfNonZero(executeCommand(f"{TOOL_COMMAND_HG} update -R {target_dir} -C {revision}"))
+        dieIfNonZero(executeCommand(f"{TOOL_COMMAND_HG} purge -R {target_dir} --config extensions.purge="))
 
     elif type == "git":
         repo_exists = os.path.exists(os.path.join(target_dir, ".git"))
 
         if not repo_exists:
             if try_only_local_operations:
-                raise RuntimeError("Repository for " + target_name + " not found; cannot execute local operations only")
+                raise RuntimeError(f"Repository for {target_name} not found; cannot execute local operations only")
             if target_dir_exists:
-                dlog("Removing directory " + target_dir + " before cloning")
+                dlog(f"Removing directory {target_dir} before cloning")
                 shutil.rmtree(target_dir)
             if recursive:
-                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " clone --recursive " + url + " " + target_dir))
+                dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} clone --recursive {url} {target_dir}"))
             else:
-                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " clone " + url + " " + target_dir))
+                dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} clone {url} {target_dir}"))
         elif not try_only_local_operations:
-            log("Repository " + target_dir + " already exists; fetching instead of cloning")
+            log(f"Repository {target_dir} already exists; fetching instead of cloning")
             if recursive:
-                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " fetch --recurse-submodules"))
+                dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} -C {target_dir} fetch --recurse-submodules"))
             else:
-                dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " fetch"))
+                dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} -C {target_dir} fetch"))
 
         if revision is None:
             revision = "HEAD"
-        dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " reset --hard " + revision))
-        dieIfNonZero(executeCommand(TOOL_COMMAND_GIT + " -C " + target_dir + " clean -fxd"))
+        dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} -C {target_dir} reset --hard {revision}"))
+        dieIfNonZero(executeCommand(f"{TOOL_COMMAND_GIT} -C {target_dir} clean -fxd"))
 
     elif type == "svn":
         if not try_only_local_operations: # we can't do much without a server connection when dealing with SVN
             if target_dir_exists:
-                dlog("Removing directory " + target_dir + " before cloning")
+                dlog(f"Removing directory {target_dir} before cloning")
                 shutil.rmtree(target_dir)
-            dieIfNonZero(executeCommand(TOOL_COMMAND_SVN + " checkout " + url + " " + target_dir))
+            dieIfNonZero(executeCommand(f"{TOOL_COMMAND_SVN} checkout {url} {target_dir}"))
 
         if revision is not None and revision != "":
             raise RuntimeError("Updating to revision not implemented for SVN.")
 
     else:
-        raise ValueError("Cloning " + type + " repositories not implemented.")
+        raise ValueError(f"Cloning {type} repositories not implemented.")
 
 
 def decompressTarXZFile(src_filename, dst_filename):
@@ -219,12 +219,12 @@ def decompressTarXZFile(src_filename, dst_filename):
     try:
         fs = open(src_filename, "rb")
     except:
-        raise RuntimeError("Opening file " + src_filename + " failed")
+        raise RuntimeError(f"Opening file {src_filename} failed")
     try:
         fd = open(dst_filename, "wb")
     except:
         fs.close()
-        raise RuntimeError("Opening file " + dst_filename + " failed")
+        raise RuntimeError(f"Opening file {dst_filename} failed")
     with fs, fd:
         decompressed = lzma.decompress(fs.read())
         fd.write(decompressed)
@@ -235,7 +235,7 @@ def extractFile(filename, target_dir):
     if os.path.exists(target_dir):
         shutil.rmtree(target_dir)
 
-    log("Extracting file " + filename)
+    log(f"Extracting file {filename}")
     stem, extension = os.path.splitext(os.path.basename(filename))
 
     if extension == ".zip" or extension == "":
@@ -243,13 +243,13 @@ def extractFile(filename, target_dir):
         try:
             zfile = zipfile.ZipFile(filename)
         except zipfile.BadZipFile:
-            warning("WARNING: Invalid ZIP file '" + filename + "'")
+            warning(f"WARNING: Invalid ZIP file '{filename}'")
             if os.path.exists(filename) and os.path.getsize(filename) == 0:
                 warning("WARNING: Zero-sized file was deleted. Run the script again.")
                 os.remove(filename)
             else:
                 warning("WARNING: Try deleting the cached file and run the script again.")
-            raise RuntimeError("Invalid ZIP file '" + filename + "'") from None
+            raise RuntimeError(f"Invalid ZIP file '{filename}'") from None
         extract_dir = os.path.commonprefix(zfile.namelist())
         hasFolder = False
         for fname in zfile.namelist():
@@ -273,7 +273,7 @@ def extractFile(filename, target_dir):
             zfile.close()
         else:
             zfile.close()
-            dieIfNonZero(executeCommand(TOOL_COMMAND_UNZIP + " " + filename + " -d " + extract_dir_abs))
+            dieIfNonZero(executeCommand(f"{TOOL_COMMAND_UNZIP} {filename} -d {extract_dir_abs}"))
 
     elif extension == ".tar" or extension == ".gz" or extension == ".bz2" or extension == ".xz":
 
@@ -305,10 +305,10 @@ def extractFile(filename, target_dir):
             tfile.close()
         else:
             tfile.close()
-            dieIfNonZero(executeCommand(TOOL_COMMAND_TAR + " -x -f " + filename + " -C " + extract_dir_abs))
+            dieIfNonZero(executeCommand(f"{TOOL_COMMAND_TAR} -x -f {filename} -C {extract_dir_abs}"))
 
     else:
-        raise RuntimeError("Unknown compressed file format " + extension)
+        raise RuntimeError(f"Unknown compressed file format {extension}")
 
     if platform.system() == "Windows":
         extract_dir = extract_dir.replace( '/', '\\' )
@@ -329,7 +329,7 @@ def extractFile(filename, target_dir):
 
 def createArchiveFromDirectory(src_dir_name, archive_name, delete_existing_archive = False):
     if delete_existing_archive and os.path.exists(archive_name):
-        dlog("Removing snapshot file " + archive_name + " before creating new one")
+        dlog(f"Removing snapshot file {archive_name} before creating new one")
         os.remove(archive_name)
 
     archive_dir = os.path.dirname(archive_name)
@@ -348,7 +348,7 @@ def downloadSCP(hostname, username, path, target_dir):
     ssh.load_system_host_keys()
     ssh.connect(hostname = hostname, username = username)
     scpc = scp.SCPClient(ssh.get_transport())
-    scpc.get(path, local_path = target_dir);
+    scpc.get(path, local_path = target_dir)
 
 def downloadProgress(cur_size, total_size):
     percent = int((cur_size / total_size)*100)
@@ -357,8 +357,8 @@ def downloadProgress(cur_size, total_size):
         print("*", end = "")
     for i in range(int(percent/2), 50):
         print(".", end = "")
-    print("] " + str(percent) + "% --- ", end = "")
-    print("%.2f" % (cur_size / (1024*1024)), "Mb", end = "\r")
+    print(f"] {percent}% --- ", end = "")
+    print(f"{cur_size / (1024*1024):.2f}", "Mb", end = "\r")
 
 def computeFileHash(filename):
     blocksize = 65536
@@ -384,12 +384,12 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
     if os.path.exists(target_filename) and sha1_hash is not None and sha1_hash != "":
         hash_file = computeFileHash(target_filename)
         if hash_file != sha1_hash:
-            log("Hash of " + target_filename + " (" + hash_file + ") does not match expected hash (" + sha1_hash + "); forcing download")
+            log(f"Hash of {target_filename} ({hash_file}) does not match expected hash ({sha1_hash}); forcing download")
             force_download = True
 
     # download file
     if (not os.path.exists(target_filename)) or force_download:
-        log("Downloading " + url + " to " + target_filename)
+        log(f"Downloading {url} to {target_filename}")
         if p.scheme == "ssh":
             downloadSCP(p.hostname, p.username, p.path, download_dir)
         else:
@@ -414,7 +414,7 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
                                 f.write(Buffer)
                                 Size += len(Buffer)
                                 downloadProgress(Size, Length)
-                            print();
+                            print()
                         else:
                             f.write(response.read())
                 os.replace(tmp_filename, target_filename)
@@ -424,13 +424,13 @@ def downloadFile(url, download_dir, target_dir_name, sha1_hash = None, force_dow
                     os.remove(tmp_filename)
                 raise
     else:
-        log("Skipping download of " + url + "; already downloaded")
+        log(f"Skipping download of {url}; already downloaded")
 
     # check SHA1 hash
     if sha1_hash is not None and sha1_hash != "":
         hash_file = computeFileHash(target_filename)
         if hash_file != sha1_hash:
-            errorStr = "Hash of " + target_filename + " (" + hash_file + ") differs from expected hash (" + sha1_hash + ")"
+            errorStr = f"Hash of {target_filename} ({hash_file}) differs from expected hash ({sha1_hash})"
             log(errorStr)
             raise RuntimeError(errorStr)
 
@@ -446,27 +446,27 @@ def applyPatchFile(patch_name, dir_name, pnum):
     # we're assuming the patch was applied like in this example:
     # diff --exclude=".git" --exclude=".hg" -rupN ./src/AGAST/ ./src/AGAST_patched/ > ./patches/agast.patch
     # where the first given location is the unpatched directory, and the second location is the patched directory.
-    log("Applying patch to " + dir_name)
+    log(f"Applying patch to {dir_name}")
     patch_dir = os.path.join(BASE_DIR, "patches")
-    arguments = "-d " + os.path.join(SRC_DIR, dir_name) + " -p" + str(pnum) + " < " + os.path.join(patch_dir, patch_name)
-    argumentsBinary = "-d " + os.path.join(SRC_DIR, dir_name) + " -p" + str(pnum) + " --binary < " + os.path.join(patch_dir, patch_name)
-    res = executeCommand(TOOL_COMMAND_PATCH + " --dry-run " + arguments, quiet = True)
+    arguments = f"-d {os.path.join(SRC_DIR, dir_name)} -p{pnum} < {os.path.join(patch_dir, patch_name)}"
+    argumentsBinary = f"-d {os.path.join(SRC_DIR, dir_name)} -p{pnum} --binary < {os.path.join(patch_dir, patch_name)}"
+    res = executeCommand(f"{TOOL_COMMAND_PATCH} --dry-run {arguments}", quiet = True)
     if res != 0:
         arguments = argumentsBinary
-        res = executeCommand(TOOL_COMMAND_PATCH + " --dry-run " + arguments, quiet = True)
+        res = executeCommand(f"{TOOL_COMMAND_PATCH} --dry-run {arguments}", quiet = True)
     if res != 0:
         warning("ERROR: patch application failure; has this patch already been applied?")
-        executeCommand(TOOL_COMMAND_PATCH + " --dry-run " + arguments, printCommand = True)
-        raise RuntimeError("Patch application failure for " + patch_name)
+        executeCommand(f"{TOOL_COMMAND_PATCH} --dry-run {arguments}", printCommand = True)
+        raise RuntimeError(f"Patch application failure for {patch_name}")
     else:
-        dieIfNonZero(executeCommand(TOOL_COMMAND_PATCH + " " + arguments, quiet = True))
+        dieIfNonZero(executeCommand(f"{TOOL_COMMAND_PATCH} {arguments}", quiet = True))
 
 
 def runPythonScript(script_name):
-    log("Running Python script " + script_name)
+    log(f"Running Python script {script_name}")
     patch_dir = os.path.join(BASE_DIR, "patches")
     filename = os.path.join(patch_dir, script_name)
-    dieIfNonZero(executeCommand(TOOL_COMMAND_PYTHON + " " + escapifyPath(filename), False));
+    dieIfNonZero(executeCommand(f"{TOOL_COMMAND_PYTHON} {escapifyPath(filename)}", False))
 
 
 def findToolCommand(command, paths_to_search, required = False):
@@ -478,12 +478,12 @@ def findToolCommand(command, paths_to_search, required = False):
         if os.path.exists(command_abs):
             command_res = command_abs
             found = True
-            break;
+            break
 
     if required and not found:
-        warning("WARNING: command " + command + " not found, but required by script")
+        warning(f"WARNING: command {command} not found, but required by script")
 
-    dlog("Found '" + command + "' as " + command_res)
+    dlog(f"Found '{command}' as {command_res}")
     return command_res
 
 
@@ -491,16 +491,16 @@ def readJSONData(filename):
     try:
         json_data = open(filename).read()
     except:
-        warning("ERROR: Could not read JSON file: " + filename)
+        warning(f"ERROR: Could not read JSON file: {filename}")
         return None
 
     try:
         data = json.loads(json_data)
     except json.JSONDecodeError as e:
-        warning("ERROR: Could not parse JSON document: {}\n    {} (line {}:{})\n".format(filename, e.msg, e.lineno, e.colno))
+        warning(f"ERROR: Could not parse JSON document: {filename}\n    {e.msg} (line {e.lineno}:{e.colno})\n")
         return None
     except:
-        warning("ERROR: Could not parse JSON document: " + filename)
+        warning(f"ERROR: Could not parse JSON document: {filename}")
         return None
 
     return data
@@ -622,13 +622,13 @@ def main(argv):
             SRC_DIR = os.path.join(BASE_DIR, SRC_DIR_BASE)
             ARCHIVE_DIR = os.path.join(BASE_DIR, ARCHIVE_DIR_BASE)
             bootstrap_filename = os.path.join(BASE_DIR, default_bootstrap_filename)
-            log("Using " + arg + " as base directory")
+            log(f"Using {arg} as base directory")
         if opt in ("--bootstrap-file",):
             bootstrap_filename = os.path.abspath(arg)
-            log("Using main bootstrap file " + bootstrap_filename)
+            log(f"Using main bootstrap file {bootstrap_filename}")
         if opt in ("--local-bootstrap-file",):
             local_bootstrap_filename = os.path.abspath(arg)
-            log("Using local bootstrap file " + local_bootstrap_filename)
+            log(f"Using local bootstrap file {local_bootstrap_filename}")
         if opt in ("--use-tar",):
             USE_TAR = True
         if opt in ("--use-unzip",):
@@ -668,26 +668,26 @@ def main(argv):
                     opt_names_local = [l for l in (line.strip() for line in f) if l]
                     opt_names_local = [l for l in opt_names_local if l[0] != '#']
                     opt_names += opt_names_local
-                    dlog("Name file contains: " + ", ".join(opt_names_local))
+                    dlog(f"Name file contains: {', '.join(opt_names_local)}")
             except:
-                warning("ERROR: cannot parse name file '" + name_file + "'")
+                warning(f"ERROR: cannot parse name file '{name_file}'")
                 return -1
 
     if force_fallback and not FALLBACK_URL:
         warning("Error: cannot force usage of the fallback location without specifying a fallback URL")
-        return -1;
+        return -1
 
     state_filename = os.path.join(os.path.dirname(os.path.splitext(bootstrap_filename)[0]), \
-                                  "." + os.path.basename(os.path.splitext(bootstrap_filename)[0])) \
+                                  f".{os.path.basename(os.path.splitext(bootstrap_filename)[0])}") \
                      + os.path.splitext(bootstrap_filename)[1]
 
-    dlog("bootstrap_filename = " + bootstrap_filename)
-    dlog("state_filename     = " + state_filename)
+    dlog(f"bootstrap_filename = {bootstrap_filename}")
+    dlog(f"state_filename     = {state_filename}")
 
     # read canonical libraries data
     data = readJSONData(bootstrap_filename)
     if data is None:
-        return -1;
+        return -1
 
     # some sanity checking
     for library in data:
@@ -701,7 +701,7 @@ def main(argv):
         local_data = readJSONData(local_bootstrap_filename)
 
         if local_data is None:
-            return -1;
+            return -1
 
         # some sanity checking
         for local_library in local_data:
@@ -732,12 +732,12 @@ def main(argv):
 
     # create source directory
     if not os.path.isdir(SRC_DIR):
-        log("Creating directory " + SRC_DIR)
+        log(f"Creating directory {SRC_DIR}")
         os.mkdir(SRC_DIR)
 
     # create archive files directory
     if not os.path.isdir(ARCHIVE_DIR):
-        log("Creating directory " + ARCHIVE_DIR)
+        log(f"Creating directory {ARCHIVE_DIR}")
         os.mkdir(ARCHIVE_DIR)
 
     failed_libraries = []
@@ -755,16 +755,16 @@ def main(argv):
             continue
 
         if predicate is not None:
-            log("Running predicate code for '" + name + "'")
+            log(f"Running predicate code for '{name}'")
             if eval(predicate) is not True:
-                log("Predicate is not True for '" + name + "'; skipping library")
+                log(f"Predicate is not True for '{name}'; skipping library")
                 continue
 
         lib_dir = os.path.join(SRC_DIR, name)
         lib_dir = lib_dir.replace(os.path.sep, '/')
 
-        dlog("********** LIBRARY " + name + " **********")
-        dlog("lib_dir = " + lib_dir + ")")
+        dlog(f"********** LIBRARY {name} **********")
+        dlog(f"lib_dir = {lib_dir})")
 
         # compare against cached state
         cached_state_ok = False
@@ -776,7 +776,7 @@ def main(argv):
                     break
 
         if cached_state_ok:
-            log("Cached state for '" + name + "' equals expected state; skipping library")
+            log(f"Cached state for '{name}' equals expected state; skipping library")
             continue
         else:
             # remove cached state for library
@@ -784,7 +784,7 @@ def main(argv):
 
         # create library directory, if necessary
         if opt_clean:
-            log("Cleaning directory for " + name)
+            log(f"Cleaning directory for {name}")
             if os.path.exists(lib_dir):
                 shutil.rmtree(lib_dir)
         if not os.path.exists(lib_dir):
@@ -794,10 +794,10 @@ def main(argv):
             # download source
             if source is not None:
                 if 'type' not in source:
-                    warning("ERROR: Invalid schema for '" + name + "': 'source' object must have a 'type'")
+                    warning(f"ERROR: Invalid schema for '{name}': 'source' object must have a 'type'")
                     return -1
                 if 'url' not in source:
-                    warning("ERROR: Invalid schema for '" + name + "': 'source' object must have a 'url'")
+                    warning(f"ERROR: Invalid schema for '{name}': 'source' object must have a 'url'")
                     return -1
                 src_type = source['type']
                 src_url = source['url']
@@ -814,12 +814,12 @@ def main(argv):
                     except:
                         if FALLBACK_URL:
                             if not force_fallback:
-                                log("WARNING: Downloading of file " + src_url + " failed; trying fallback")
+                                log(f"WARNING: Downloading of file {src_url} failed; trying fallback")
 
                             p = urlparse(src_url)
                             filename_rel = os.path.split(p.path)[1] # get original filename
                             p = urlparse(FALLBACK_URL)
-                            fallback_src_url = urlunparse([p[0], p[1], p[2] + "/" + ARCHIVE_DIR_BASE + "/" + filename_rel, p[3], p[4], p[5]])
+                            fallback_src_url = urlunparse([p[0], p[1], f"{p[2]}/{ARCHIVE_DIR_BASE}/{filename_rel}", p[3], p[4], p[5]])
                             downloadFile(fallback_src_url, ARCHIVE_DIR, name, sha1, force_download = True)
                             shutil.copyfile( os.path.join(ARCHIVE_DIR, filename_rel), os.path.join(lib_dir, filename_rel) )
                         else:
@@ -835,12 +835,12 @@ def main(argv):
                     except:
                         if FALLBACK_URL:
                             if not force_fallback:
-                                log("WARNING: Downloading of file " + src_url + " failed; trying fallback")
+                                log(f"WARNING: Downloading of file {src_url} failed; trying fallback")
 
                             p = urlparse(src_url)
                             filename_rel = os.path.split(p.path)[1] # get original filename
                             p = urlparse(FALLBACK_URL)
-                            fallback_src_url = urlunparse([p[0], p[1], p[2] + "/" + ARCHIVE_DIR_BASE + "/" + filename_rel, p[3], p[4], p[5]])
+                            fallback_src_url = urlunparse([p[0], p[1], f"{p[2]}/{ARCHIVE_DIR_BASE}/{filename_rel}", p[3], p[4], p[5]])
                             downloadAndExtractFile(fallback_src_url, ARCHIVE_DIR, name, sha1, force_download = True)
                         else:
                             raise
@@ -849,9 +849,9 @@ def main(argv):
                     revision = source.get('revision', None)
                     recursive = source.get('recursive', True)
 
-                    archive_name = name + ".tar.gz" # for reading or writing of snapshot archives
+                    archive_name = f"{name}.tar.gz" # for reading or writing of snapshot archives
                     if revision is not None:
-                        archive_name = name + "_" + revision + ".tar.gz"
+                        archive_name = f"{name}_{revision}.tar.gz"
 
                     try:
                         if force_fallback:
@@ -859,22 +859,22 @@ def main(argv):
                         cloneRepository(src_type, src_url, name, revision, False, recursive)
 
                         if create_repo_snapshots:
-                            log("Creating snapshot of library repository '" + name + "'")
+                            log(f"Creating snapshot of library repository '{name}'")
                             repo_dir = os.path.join(SRC_DIR, name)
                             archive_filename = os.path.join(SNAPSHOT_DIR, archive_name)
 
-                            dlog("Snapshot will be saved as " + archive_filename)
+                            dlog(f"Snapshot will be saved as {archive_filename}")
                             createArchiveFromDirectory(repo_dir, archive_filename, revision is None)
 
                     except:
                         if FALLBACK_URL:
                             if not force_fallback:
-                                log("WARNING: Cloning of repository " + src_url + " failed; trying fallback")
+                                log(f"WARNING: Cloning of repository {src_url} failed; trying fallback")
 
                             # copy archived snapshot from fallback location
                             p = urlparse(FALLBACK_URL)
-                            fallback_src_url = urlunparse([p[0], p[1], p[2] + "/" + SNAPSHOT_DIR_BASE + "/" + archive_name, p[3], p[4], p[5]])
-                            dlog("Looking for snapshot " + fallback_src_url + " of library repository " + name)
+                            fallback_src_url = urlunparse([p[0], p[1], f"{p[2]}/{SNAPSHOT_DIR_BASE}/{archive_name}", p[3], p[4], p[5]])
+                            dlog(f"Looking for snapshot {fallback_src_url} of library repository {name}")
 
                             # create snapshots files directory
                             downloadAndExtractFile(fallback_src_url, SNAPSHOT_DIR, name, force_download = True)
@@ -891,10 +891,10 @@ def main(argv):
             # post-processing
             if post is not None:
                 if 'type' not in post:
-                    warning("ERROR: Invalid schema for '" + name + "': 'postprocess' object must have a 'type'")
+                    warning(f"ERROR: Invalid schema for '{name}': 'postprocess' object must have a 'type'")
                     return -1
                 if 'file' not in post:
-                    warning("ERROR: Invalid schema for '" + name + "': 'postprocess' object must have a 'file'")
+                    warning(f"ERROR: Invalid schema for '{name}': 'postprocess' object must have a 'file'")
                     return -1
                 post_type = post['type']
                 post_file = post['file']
@@ -904,7 +904,7 @@ def main(argv):
                 elif post_type == "script":
                     runPythonScript(post_file)
                 else:
-                    warning("ERROR: Unknown post-processing type '" + post_type + "' for " + name)
+                    warning(f"ERROR: Unknown post-processing type '{post_type}' for {name}")
                     return -1
 
             # add to cached state
@@ -913,13 +913,13 @@ def main(argv):
             # write out cached state
             writeJSONData(sdata, state_filename)
         except urllib.error.URLError as e:
-            warning("ERROR: Failure to bootstrap library '" + name + "' (urllib.error.URLError: reason " + str(e.reason) + ")")
+            warning(f"ERROR: Failure to bootstrap library '{name}' (urllib.error.URLError: reason {e.reason})")
             if break_on_first_error:
                 exit(-1)
             traceback.print_exc()
             failed_libraries.append(name)
         except:
-            warning("ERROR: Failure to bootstrap library '" + name + "' (reason: " + str(sys.exc_info()[0]) + ")")
+            warning(f"ERROR: Failure to bootstrap library '{name}' (reason: {sys.exc_info()[0]})")
             if break_on_first_error:
                 exit(-1)
             traceback.print_exc()
@@ -934,8 +934,9 @@ def main(argv):
 
     log("Finished")
 
-    # touch the state cache file
-    os.utime(state_filename, None);
+    # touch the state cache file (may not exist if no libraries were processed)
+    if os.path.exists(state_filename):
+        os.utime(state_filename, None)
 
     return 0
 
